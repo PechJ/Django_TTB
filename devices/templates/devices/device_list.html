@@ -1,0 +1,21 @@
+<h1>Alarmierung</h1>
+
+<h2>Geräte</h2>
+<p>{{ devices|length }} Geräte vorhanden.</p>
+<table border="1">
+    <tr>
+        <th>Gerätename</th>
+        <th>TEI</th>
+        <th>ISSI</th>
+        <th>Status</th>
+    </tr>
+
+    {% for device in devices %}
+    <tr>
+        <td>{{ device.geraetename }}</td>
+        <td>{{ device.tei }}</td>
+        <td>{{ device.issi }}</td>
+        <td>{{ device.get_status_display }}</td>
+    </tr>
+    {% endfor %}
+</table>

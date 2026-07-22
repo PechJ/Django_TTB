@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Startseite{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+
+    <h2>Willkommen bei TTB</h2>
+
+    <p>
+        Digitales Verwaltungs- und Dokumentationssystem
+    </p>
+
+</section>
+
+<section class="tiles">
+
+    <a href="/alarmierung/" class="tile">
+
+        <h3>Alarmierung</h3>
+
+        <p>
+            Verwaltung der Alarmierungsgeräte
+        </p>
+
+    </a>
+
+    <a href="/funk/" class="tile">
+
+        <h3>Funk</h3>
+
+        <p>
+            Verwaltung der Funkgeräte
+        </p>
+
+    </a>
+    
+    <a href="{% url 'devices:import' %}">
+    Import
+    </a>
+
+    <a href="/information/" class="tile">
+
+        <h3>Information</h3>
+
+        <p>
+            Dashboard, Aufgaben und Auswertungen
+        </p>
+
+    </a>
+
+</section>
+
+{% endblock %}

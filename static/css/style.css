@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f4f6;
+    color: #333;
+}
+
+/* ---------- Header ---------- */
+
+header {
+    background: #1d3557;
+    color: white;
+    padding: 20px 40px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* ---------- Inhalt ---------- */
+
+main {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px;
+}
+
+.welcome {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.welcome h2 {
+    margin-bottom: 10px;
+}
+
+/* ---------- Kacheln ---------- */
+
+.tiles {
+    display: flex;
+    gap: 30px;
+}
+
+.tile {
+    flex: 1;
+
+    background: white;
+
+    border-radius: 10px;
+
+    padding: 30px;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+
+    transition: .2s;
+}
+
+.tile:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow: 0 10px 20px rgba(0,0,0,.15);
+
+}
+
+.tile h3 {
+
+    margin-top: 0;
+
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+
+    margin-top: 60px;
+
+    text-align: center;
+
+    padding: 20px;
+
+    color: #777;
+
+}

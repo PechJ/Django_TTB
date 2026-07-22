@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+.venv/
+
+# Django
+db.sqlite3
+
+# VS Code
+.vscode/
+
+# Media (werden später separat gesichert)
+media/
+
+# Logs
+*.log

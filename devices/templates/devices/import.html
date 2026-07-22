@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Lebend-Import</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <input
+        type="file"
+        name="file"
+        accept=".xlsx,.xls"
+    >
+
+    <button type="submit">
+        Validieren
+    </button>
+
+</form>
+
+{% if success %}
+
+<p>{{ success }}</p>
+
+{% endif %}
+
+{% if errors %}
+
+<ul>
+
+{% for error in errors %}
+
+<li>{{ error.message }}</li>
+
+{% endfor %}
+
+</ul>
+
+{% endif %}
+
+{% endblock %}
