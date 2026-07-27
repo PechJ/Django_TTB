@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from .models import Device
-from .forms import ManufacturerRadioImportForm
-from .imports.manufacturer_radio import ManufacturerRadioImporter
 from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
-from devices.imports.manufacturer_radio import ManufacturerRadioImporter
+from devices.imports.manufacturer_radio import ManufacturerImporter
+from devices.forms import ManufacturerRadioImportForm
 from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
 
@@ -20,31 +19,38 @@ def device_list(request):
     )
 
 
-def manufacturer_radio_import(request):
+def manufacturer_import_view(request):
 
-    result = None
+    form = ManufacturerRadioImportForm()
 
     if request.method == "POST":
 
-        form = ManufacturerRadioImportForm(request.POST, request.FILES)
+        form = ManufacturerRadioImportForm(
+            request.POST,
+            request.FILES,
+        )
 
         if form.is_valid():
 
-            importer = ManufacturerRadioImporter(
-                form.cleaned_data["file"]
+            uploaded_file = form.cleaned_data["file"]
+
+            importer = ManufacturerImporter(
+                uploaded_file,
             )
 
             result = importer.run()
 
-    else:
-        form = ManufacturerRadioImportForm()
+            messages.success(
+                request,
+                f"{result.created} Geräte angelegt, "
+                f"{result.updated} aktualisiert."
+            )
 
     return render(
         request,
         "devices/import_radio.html",
         {
             "form": form,
-            "result": result,
         },
     )
 

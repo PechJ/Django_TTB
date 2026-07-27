@@ -4,7 +4,7 @@ from devices.models import Device
 from .base import BaseImporter
 
 
-class ManufacturerRadioImporter(BaseImporter):
+class ManufacturerImporter(BaseImporter):
     """
     Importiert Funk-Stammdaten aus der Sepura-Herstellerdatei.
     """

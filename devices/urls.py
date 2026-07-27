@@ -14,14 +14,14 @@ urlpatterns = [
     ),
 
     path(
-        "import/radio/",
-        views.manufacturer_radio_import,
-        name="manufacturer_radio_import",
-    ),
-    
-    path(
         "import/",
         views.import_view,
         name="import",
+    ),
+    
+    path(
+        "import/manufacturer/",
+        views.manufacturer_import_view,
+        name="manufacturer_import",
     ),
 ]

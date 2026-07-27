@@ -1,8 +1,4 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-<h1>Funk-Stammdaten importieren</h1>
+<h1>Herstellerimport</h1>
 
 <form method="post" enctype="multipart/form-data">
 
@@ -11,21 +7,7 @@
     {{ form.as_p }}
 
     <button type="submit">
-        Importieren
+        Herstellerdatei importieren
     </button>
 
 </form>
-
-{% if result %}
-
-<h2>Import abgeschlossen</h2>
-
-<ul>
-    <li>Neu: {{ result.created }}</li>
-    <li>Aktualisiert: {{ result.updated }}</li>
-    <li>Übersprungen: {{ result.skipped }}</li>
-</ul>
-
-{% endif %}
-
-{% endblock %}

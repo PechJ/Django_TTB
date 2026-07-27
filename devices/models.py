@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+
+class ProgrammingStatus(models.TextChoices):
+    OPEN = "OPEN", "Offen"
+    IN_PROGRESS = "IN_PROGRESS", "In Bearbeitung"
+    DONE = "DONE", "Erledigt"
 
 
 class Device(models.Model):
@@ -128,6 +135,34 @@ class Device(models.Model):
         choices=Status.choices,
         default=Status.IN_BETRIEB,
     )
+    
+    assigned_to = models.ForeignKey(
+    User,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    )
 
+    programming_status = models.CharField(
+        max_length=20,
+        default="offen",
+    )
+
+    programming_date = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    
+    programming_status = models.CharField(
+    max_length=20,
+    choices=ProgrammingStatus.choices,
+    default=ProgrammingStatus.OPEN,
+    )
+
+    needs_programming = models.BooleanField(
+        default=False,
+        verbose_name="Programmierung erforderlich",
+    )
+    
     def __str__(self):
         return f"{self.geraetename} ({self.tei})"

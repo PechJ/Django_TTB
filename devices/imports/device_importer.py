@@ -1,4 +1,4 @@
-from devices.models import Device
+from devices.models import Device, ProgrammingStatus
 
 
 class DeviceImporter:
@@ -14,7 +14,7 @@ class DeviceImporter:
 
         for row in self.rows:
 
-            _, created = Device.objects.update_or_create(
+            device, created = Device.objects.update_or_create(
                 tei=row["tei"],
                 defaults={
                     "landkreis": row["landkreis"],
@@ -29,7 +29,12 @@ class DeviceImporter:
                     "issi": row["issi"],
                 },
             )
-
+            
+            device.programming_status = ProgrammingStatus.OPEN
+            device.save(update_fields=["programming_status"])
+            device.needs_programming = True
+            device.save(update_fields=["needs_programming"])
+            
             if created:
                 self.created += 1
             else:
