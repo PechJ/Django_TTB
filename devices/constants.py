@@ -29,3 +29,6 @@ class Organisationsarten:
 class ValidationRules:
 
     RADIO_TEI_LENGTH = 15
+    
+class DeviceConstants:
+    REQUIRED_FIRMWARE = "V10.26 / SC 3.1"

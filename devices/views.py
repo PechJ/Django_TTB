@@ -7,6 +7,7 @@ from devices.imports.manufacturer_radio import ManufacturerImporter
 from devices.forms import ManufacturerRadioImportForm
 from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
+from devices.constants import DeviceConstants as Constants
 
 
 def device_list(request):
@@ -107,5 +108,31 @@ def import_view(request):
         "devices/import.html",
         {
             "form": form,
+        },
+    )
+    
+
+def funk_home(request):
+
+    return render(
+        request,
+        "devices/funk_home.html",
+    )
+    
+
+def programming_list(request):
+
+    devices = Device.objects.exclude(
+        software_version=Constants.REQUIRED_FIRMWARE
+    ).order_by(
+        "organisationsname",
+        "funkrufname",
+    )
+
+    return render(
+        request,
+        "devices/programming_list.html",
+        {
+            "devices": devices,
         },
     )

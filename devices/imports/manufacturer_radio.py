@@ -11,7 +11,7 @@ class ManufacturerImporter(BaseImporter):
 
     COLUMN_TEI = "TEI"
     COLUMN_PRODUCT = "Produktname"
-    COLUMN_SOFTWARE = "Aktuelle Version der Hauptsoftware"
+    COLUMN_SOFTWARE = "Softwareversion"
 
     def run(self):
 
@@ -22,7 +22,7 @@ class ManufacturerImporter(BaseImporter):
         lines = content.splitlines()[2:]
 
         reader = csv.DictReader(lines, delimiter=",")
-
+        print(reader.fieldnames)
         for row in reader:
 
             tei = row[self.COLUMN_TEI].strip()
@@ -34,11 +34,14 @@ class ManufacturerImporter(BaseImporter):
             product_name = row[self.COLUMN_PRODUCT].strip()
             software_version = row[self.COLUMN_SOFTWARE].strip()
 
+            print("TEI:", tei)
+            print("Produkt:", product_name)
+            print("Software:", repr(software_version))
             _, created = Device.objects.update_or_create(
                 tei=tei,
                 defaults={
                     "geraetename": product_name,
-                    "softwareversion": software_version,
+                    "software_version": software_version,
                 },
             )
 

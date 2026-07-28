@@ -7,8 +7,10 @@ app_name = "devices"
 
 
 urlpatterns = [
+    path("", views.funk_home, name="funk_home"),
+
     path(
-        "",
+        "list/",
         views.device_list,
         name="device_list",
     ),
@@ -18,10 +20,16 @@ urlpatterns = [
         views.import_view,
         name="import",
     ),
-    
+
     path(
-        "import/manufacturer/",
+        "manufacturer/",
         views.manufacturer_import_view,
         name="manufacturer_import",
+    ),
+    
+    path(
+    "programming/",
+    views.programming_list,
+    name="programming_list",
     ),
 ]

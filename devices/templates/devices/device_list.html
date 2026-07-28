@@ -8,6 +8,7 @@
         <th>TEI</th>
         <th>ISSI</th>
         <th>Status</th>
+        <th>software</th>
     </tr>
 
     {% for device in devices %}
@@ -16,6 +17,7 @@
         <td>{{ device.tei }}</td>
         <td>{{ device.issi }}</td>
         <td>{{ device.get_status_display }}</td>
+        <td>{{ device.software_version }}</td>
     </tr>
     {% endfor %}
 </table>

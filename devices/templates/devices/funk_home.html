@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Funk{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+
+    <h2>Funk</h2>
+
+    <p>
+        Verwaltung der Funkgeräte und zugehörigen Arbeitsabläufe
+    </p>
+
+</section>
+
+<section class="tiles">
+
+    <a href="{% url 'devices:device_list' %}" class="tile">
+
+        <h3>Geräteverwaltung</h3>
+
+        <p>
+            Alle Funkgeräte anzeigen und bearbeiten
+        </p>
+
+    </a>
+
+    <a href="{% url 'devices:manufacturer_import' %}" class="tile">
+
+        <h3>Herstellerimport</h3>
+
+        <p>
+            Gerätedaten aus der Herstellerdatei importieren
+        </p>
+
+    </a>
+
+    <a href="{% url 'devices:import' %}" class="tile">
+
+        <h3>Netzzugangsimport</h3>
+
+        <p>
+            Anträge auf Netzzugang importieren
+        </p>
+
+    </a>
+
+    <a href="{% url 'devices:programming_list' %}" class="tile">
+
+        <h3>Programmierungen</h3>
+
+        <p>
+            Offene Programmierungen anzeigen
+        </p>
+
+    </a>
+
+    <a href="#" class="tile">
+
+        <h3>Auswertungen</h3>
+
+        <p>
+            Statistiken und Übersichten
+        </p>
+
+    </a>
+
+</section>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from devices.models import Device, ProgrammingStatus
+from devices.models import Device
 
 
 class DeviceImporter:
@@ -29,11 +29,6 @@ class DeviceImporter:
                     "issi": row["issi"],
                 },
             )
-            
-            device.programming_status = ProgrammingStatus.OPEN
-            device.save(update_fields=["programming_status"])
-            device.needs_programming = True
-            device.save(update_fields=["needs_programming"])
             
             if created:
                 self.created += 1
