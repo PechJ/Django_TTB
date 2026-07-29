@@ -8,6 +8,7 @@ from devices.forms import ManufacturerRadioImportForm
 from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
 from devices.constants import DeviceConstants as Constants
+from devices.imports.excel_reader import ImportType
 
 
 def device_list(request):
@@ -71,10 +72,7 @@ def import_view(request):
 
             uploaded_file = form.cleaned_data["file"]
 
-            rows = ExcelReader(
-                uploaded_file,
-            ).read()
-            print(rows)
+            rows, import_type = ExcelReader(uploaded_file).read()
 
             validator = InputValidator(rows)
 
@@ -91,9 +89,27 @@ def import_view(request):
 
             else:
 
-                importer = DeviceImporter(rows)
+                if import_type == import_type.ENDGERAETE:
+                    importer = DeviceImporter(rows)
+                    exporter = EndgeraeteExporter()
+
+                elif import_type == import_type.SIRENEN:
+                    importer = SirenImporter(rows)
+                    exporter = SirenenExporter()
+
+                else:
+                    messages.error(
+                        request,
+                        "Unbekannter Antragstyp."
+                    )
+                    return render(
+                        request,
+                        "devices/import.html",
+                        {"form": form},
+                    )
 
                 result = importer.run()
+                exporter.run()
 
                 messages.success(
                     request,
@@ -128,7 +144,7 @@ def programming_list(request):
         "organisationsname",
         "funkrufname",
     )
-
+    
     return render(
         request,
         "devices/programming_list.html",
@@ -136,3 +152,26 @@ def programming_list(request):
             "devices": devices,
         },
     )
+    
+
+def programming_complete(request, device_id):    
+    from django.shortcuts import get_object_or_404, redirect
+    from django.utils import timezone
+    
+    if request.method != "POST":
+        return redirect("devices:programming_list")
+    
+    device = get_object_or_404(Device, id=device_id)
+
+    device.software_version = Constants.REQUIRED_FIRMWARE
+    device.programming_date = timezone.now()
+    device.assigned_to = request.user
+
+    device.save()
+    messages.success(
+    request,
+    f"{device.geraetename} wurde erfolgreich programmiert."
+)
+
+    return redirect("devices:programming_list")
+

@@ -32,4 +32,10 @@ urlpatterns = [
     views.programming_list,
     name="programming_list",
     ),
+    
+    path(
+        "programming/<int:device_id>/complete/",
+        views.programming_complete,
+        name="programming_complete",
+    ),
 ]

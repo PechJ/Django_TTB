@@ -1,6 +1,11 @@
 from openpyxl import load_workbook
 
 
+class ImportType(Enum):
+    ENDGERAETE = "endgeraete"
+    SIRENEN = "sirenen"
+
+
 class ExcelReader:
 
     def __init__(self, file):
@@ -34,40 +39,51 @@ class ExcelReader:
         rows = []
 
         # Gerätetabelle beginnt bei Zeile 18
-        for excel_row in sheet.iter_rows(min_row=18, values_only=True):
-            opta = "".join(
-                str(excel_row[i]).strip()
-                for i in range(18, 23)
-                if excel_row[i]
-            )
-            opta2 = "".join(
-                str(excel_row[i]).strip()
-                for i in range(24, 34)
-                if excel_row[i]
-            )
-            row = {
-                "landkreis": str(landkreis).strip() if landkreis else "",
-                "kommune": str(kommune).strip() if kommune else "",
-                "organisationsart": str(organisationsart).strip() if organisationsart else "",
-                "organisationsname": str(organisationsname).strip() if organisationsname else "",
+        title = str(sheet["A2"].value or "")
+        if "Endgeräte" in title:
+            for excel_row in sheet.iter_rows(min_row=18, values_only=True):
+                opta = "".join(
+                    str(excel_row[i]).strip()
+                    for i in range(18, 23)
+                    if excel_row[i]
+                )
+                opta2 = "".join(
+                    str(excel_row[i]).strip()
+                    for i in range(24, 34)
+                    if excel_row[i]
+                )
+                row = {
+                    "landkreis": str(landkreis).strip() if landkreis else "",
+                    "kommune": str(kommune).strip() if kommune else "",
+                    "organisationsart": str(organisationsart).strip() if organisationsart else "",
+                    "organisationsname": str(organisationsname).strip() if organisationsname else "",
 
-                # Diese Spalten müssen wir ggf. noch anpassen,
-                # sobald wir die exakten Spalten kennen.
-                "seriennummer": str(excel_row[COLUMN_SERIALNUMBER]).strip() if excel_row[COLUMN_SERIALNUMBER] else "",
-                "tei": str(excel_row[COLUMN_TEI]).strip() if excel_row[COLUMN_TEI] else "",
-                "opta": opta,
-                "issi": str(excel_row[COLUMN_ISSI]).strip() if excel_row[COLUMN_ISSI] else "",
-                "sika-nummer": str(excel_row[COLUMN_SIKANUMBER]).strip() if excel_row[COLUMN_SIKANUMBER] else "",
-                "sika-name": str(excel_row[COLUMN_SIKANAME]).strip() if excel_row[COLUMN_SIKANAME] else "",
-                "fahrzeug": str(excel_row[COLUMN_UNIT]).strip() if excel_row[COLUMN_UNIT] else "",
-                "funkrufname": str(excel_row[COLUMN_FUNKRUFNAME]).strip() if excel_row[COLUMN_FUNKRUFNAME] else "",
-                "verwendung": str(excel_row[COLUMN_USECASE]).strip() if excel_row[COLUMN_USECASE] else "",
-                "opta2": opta2
-            }
-            print(row)
-            if not excel_row[5]:
-                break
+                    # Diese Spalten müssen wir ggf. noch anpassen,
+                    # sobald wir die exakten Spalten kennen.
+                    "seriennummer": str(excel_row[COLUMN_SERIALNUMBER]).strip() if excel_row[COLUMN_SERIALNUMBER] else "",
+                    "tei": str(excel_row[COLUMN_TEI]).strip() if excel_row[COLUMN_TEI] else "",
+                    "opta": opta,
+                    "issi": str(excel_row[COLUMN_ISSI]).strip() if excel_row[COLUMN_ISSI] else "",
+                    "sika-nummer": str(excel_row[COLUMN_SIKANUMBER]).strip() if excel_row[COLUMN_SIKANUMBER] else "",
+                    "sika-name": str(excel_row[COLUMN_SIKANAME]).strip() if excel_row[COLUMN_SIKANAME] else "",
+                    "fahrzeug": str(excel_row[COLUMN_UNIT]).strip() if excel_row[COLUMN_UNIT] else "",
+                    "funkrufname": str(excel_row[COLUMN_FUNKRUFNAME]).strip() if excel_row[COLUMN_FUNKRUFNAME] else "",
+                    "verwendung": str(excel_row[COLUMN_USECASE]).strip() if excel_row[COLUMN_USECASE] else "",
+                    "opta2": opta2
+                }
+                print(row)
+                if not excel_row[5]:
+                    break
 
-            rows.append(row)
+                rows.append(row)
 
-        return rows
+            return rows, ImportType.ENDGERAETE
+    
+        elif "Sirenen" in title:
+            
+            return rows, ImportType.SIRENEN
+        
+        else:
+            raise ValueError(
+                    f"Unbekannter Antragstyp: {title}"
+                )

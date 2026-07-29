@@ -1,21 +1,16 @@
 <header>
     <h1>TTB</h1>
-
 </header>
 
 <main>
 
 {% if messages %}
-
     {% for message in messages %}
-
         <div class="alert alert-{{ message.tags }}">
             {{ message }}
         </div>
-
     {% endfor %}
-
-{% endif %}    
+{% endif %}
 
 {% block content %}
 {% endblock %}
@@ -23,11 +18,8 @@
 </main>
 
 <footer>
-
-TTB © 2026
-
+    TTB © 2026
 </footer>
 
 </body>
-
 </html>
