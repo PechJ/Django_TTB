@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-
+from enum import Enum
 
 class ImportType(Enum):
     ENDGERAETE = "endgeraete"

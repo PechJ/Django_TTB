@@ -9,6 +9,9 @@ from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
 from devices.constants import DeviceConstants as Constants
 from devices.imports.excel_reader import ImportType
+from .utils import create_export_filename
+from devices.exports.tactilon_radio_builder import TactilonRadioBuilder
+from devices.exports.csv_exporter import CsvExporter
 
 
 def device_list(request):
@@ -89,9 +92,26 @@ def import_view(request):
 
             else:
 
-                if import_type == import_type.ENDGERAETE:
+                if import_type == ImportType.ENDGERAETE:
+
                     importer = DeviceImporter(rows)
-                    exporter = EndgeraeteExporter()
+
+                    result = importer.run()
+
+                    builder = TactilonRadioBuilder(rows)
+
+                    headers, export_rows = builder.build()
+
+                    filename = create_export_filename(
+                        rows[0]["organisationsname"]
+                    )
+
+                    print(">>> CsvExporter wird aufgerufen")
+                    filepath = CsvExporter(
+                        headers=headers,
+                        rows=export_rows,
+                    ).export(filename)
+                    print(filepath)
 
                 elif import_type == import_type.SIRENEN:
                     importer = SirenImporter(rows)
@@ -109,15 +129,11 @@ def import_view(request):
                     )
 
                 result = importer.run()
-                exporter.run()
 
                 messages.success(
                     request,
                     f"{result.created} Geräte angelegt, {result.updated} aktualisiert."
                 )
-                
-                for row in rows:
-                    print(row)
 
     return render(
         request,
