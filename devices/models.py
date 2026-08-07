@@ -102,6 +102,11 @@ class Device(models.Model):
         blank=True,
         default="",
     )
+    
+    bemerkung = models.TextField(
+    blank=True,
+    default="",
+    )
 
     # ------------------------------------------------------------------
     # Verwendung
