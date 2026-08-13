@@ -32,3 +32,5 @@ class ValidationRules:
     
 class DeviceConstants:
     REQUIRED_FIRMWARE = "V10.26 / SC 3.1"
+    MCC = 262
+    MNC = 1001

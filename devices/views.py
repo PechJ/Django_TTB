@@ -12,6 +12,7 @@ from devices.imports.excel_reader import ImportType
 from .utils import create_export_filename
 from devices.exports.tactilon_radio_builder import TactilonRadioBuilder
 from devices.exports.csv_exporter import CsvExporter
+from devices.services.import_status import update_import_status
 
 
 def device_list(request):
@@ -97,6 +98,10 @@ def import_view(request):
                     importer = DeviceImporter(rows)
 
                     result = importer.run()
+                    
+                    update_import_status(
+                        ImportType.ENDGERAETE
+                    )
 
                     builder = TactilonRadioBuilder(rows)
 
@@ -113,7 +118,7 @@ def import_view(request):
                     ).export(filename)
                     print(filepath)
 
-                elif import_type == import_type.SIRENEN:
+                elif import_type == ImportType.SIRENEN:
                     importer = SirenImporter(rows)
                     exporter = SirenenExporter()
 
@@ -127,8 +132,6 @@ def import_view(request):
                         "devices/import.html",
                         {"form": form},
                     )
-
-                result = importer.run()
 
                 messages.success(
                     request,

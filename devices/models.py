@@ -148,3 +148,19 @@ class Device(models.Model):
     
     def __str__(self):
         return f"{self.geraetename} ({self.tei})"
+    
+    
+class ImportStatus(models.Model):
+
+    import_type = models.CharField(
+        max_length=50,
+        unique=True,
+    )
+
+    last_import = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"{self.import_type}: {self.last_import}"
