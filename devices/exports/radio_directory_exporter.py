@@ -1,9 +1,9 @@
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
-
-from devices.models import Device
-from devices.constants import Constants
+from devices.constants import DeviceConstants as Constants
+from devices.models import Device, ImportStatus
+from pathlib import Path
 
 
 class RadioDirectoryExporter:
@@ -11,12 +11,38 @@ class RadioDirectoryExporter:
     MRT = "MRT"
     FRT = "FRT"
 
-    def __init__(self, import_date):
-        self.import_date = import_date
+    DOWNLOAD_FOLDER = Path.home() / "Downloads"
 
-    def export(self, filepath):
+    def __init__(self, landkreis):
 
-        devices = Device.objects.all()
+        self.landkreis = landkreis
+
+        status = ImportStatus.objects.get(
+            import_type="endgeraete"
+        )
+
+        self.import_date = status.last_import.replace(
+            tzinfo=None
+        )
+
+    def export(self):
+
+        devices = Device.objects.filter(
+            landkreis=self.landkreis
+        )
+
+        self.DOWNLOAD_FOLDER.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        filename = (
+            f"{self.import_date:%Y-%m-%d}"
+            f"_Funkverzeichnis_Digitalfunk_"
+            f"{self.landkreis}.xlsx"
+        )
+
+        filepath = self.DOWNLOAD_FOLDER / filename
 
         workbook = Workbook()
         sheet = workbook.active

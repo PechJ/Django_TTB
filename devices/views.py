@@ -13,6 +13,7 @@ from .utils import create_export_filename
 from devices.exports.tactilon_radio_builder import TactilonRadioBuilder
 from devices.exports.csv_exporter import CsvExporter
 from devices.services.import_status import update_import_status
+from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 
 
 def device_list(request):
@@ -102,6 +103,14 @@ def import_view(request):
                     update_import_status(
                         ImportType.ENDGERAETE
                     )
+                    
+                    landkreis = rows[0]["landkreis"]
+
+                    radio_exporter = RadioDirectoryExporter(
+                        landkreis
+                    )
+                    
+                    radio_exporter.export()
 
                     builder = TactilonRadioBuilder(rows)
 
