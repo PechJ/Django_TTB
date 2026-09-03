@@ -1,21 +1,47 @@
-<h1>Alarmierung</h1>
+<h1>Funkgeräte</h1>
 
 <h2>Geräte</h2>
+<p>Letzter Geräteimport: {{ last_device_import|date:"d.m.Y H:i" }}</p>
 <p>{{ devices|length }} Geräte vorhanden.</p>
+
 <table border="1">
     <tr>
-        <th>Gerätename</th>
+        <th>Datum TTB</th>
+        <th>Datum ILS</th>
+        <th>EG-Art</th>
+        <th>Hersteller</th>
+        <th>EG-Typ</th>
+        <th>Seriennummer</th>
         <th>TEI</th>
+        <th>MCC</th>
+        <th>MNC</th>
         <th>ISSI</th>
+        <th>BOS-SiKa-Nummer</th>
+        <th>BOS-SiKa-Name</th>
+        <th>Fahrzeugart/Standort</th>
+        <th>Funkrufname</th>
+        <th>Verwendung</th>
         <th>Status</th>
-        <th>software</th>
+        <th>Software</th>
     </tr>
 
     {% for device in devices %}
     <tr>
-        <td>{{ device.geraetename }}</td>
+        <td>{{ device.datum_ttb|date:"d.m.Y H:i" }}</td>
+        <td>{{ device.datum_ils }}</td>
+        <td>{{ device.eg_art }}</td>
+        <td>{{ device.hersteller }}</td>
+        <td>{{ device.eg_typ }}</td>
+        <td>{{ device.seriennummer }}</td>
         <td>{{ device.tei }}</td>
+        <td>{{ mcc }}</td>
+        <td>{{ mnc }}</td>
         <td>{{ device.issi }}</td>
+        <td>{{ device.bos_sika_nummer }}</td>
+        <td>{{ device.bos_sika_name }}</td>
+        <td>{{ device.fahrzeugart }}</td>
+        <td>{{ device.funkrufname }}</td>
+        <td>{{ device.verwendung }}</td>
         <td>{{ device.get_status_display }}</td>
         <td>{{ device.software_version }}</td>
     </tr>

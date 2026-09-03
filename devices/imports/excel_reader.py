@@ -13,6 +13,9 @@ class ExcelReader:
 
     def read(self):
 
+        COLUMN_EG_ART = 1
+        COLUMN_MANUFACTURER = 2
+        COLUMN_DEVICE_TYPE = 3
         COLUMN_SERIALNUMBER = 4
         COLUMN_TEI = 5
         COLUMN_ISSI = 8
@@ -57,6 +60,9 @@ class ExcelReader:
                     "kommune": str(kommune).strip() if kommune else "",
                     "organisationsart": str(organisationsart).strip() if organisationsart else "",
                     "organisationsname": str(organisationsname).strip() if organisationsname else "",
+                    
+                    "eg_art": str(excel_row[COLUMN_EG_ART]).strip() if excel_row[COLUMN_EG_ART] else "",
+                    "hersteller": str(excel_row[COLUMN_MANUFACTURER]).strip() if excel_row[COLUMN_MANUFACTURER] else "",
 
                     # Diese Spalten müssen wir ggf. noch anpassen,
                     # sobald wir die exakten Spalten kennen.
@@ -66,10 +72,31 @@ class ExcelReader:
                     "issi": str(excel_row[COLUMN_ISSI]).strip() if excel_row[COLUMN_ISSI] else "",
                     "sika-nummer": str(excel_row[COLUMN_SIKANUMBER]).strip() if excel_row[COLUMN_SIKANUMBER] else "",
                     "sika-name": str(excel_row[COLUMN_SIKANAME]).strip() if excel_row[COLUMN_SIKANAME] else "",
-                    "fahrzeug": str(excel_row[COLUMN_UNIT]).strip() if excel_row[COLUMN_UNIT] else "",
+                    "fahrzeugart": str(excel_row[COLUMN_UNIT]).strip() if excel_row[COLUMN_UNIT] else "",
                     "funkrufname": str(excel_row[COLUMN_FUNKRUFNAME]).strip() if excel_row[COLUMN_FUNKRUFNAME] else "",
                     "verwendung": str(excel_row[COLUMN_USECASE]).strip() if excel_row[COLUMN_USECASE] else "",
-                    "opta2": opta2
+                    
+                    "gopta_itsi": str(excel_row[14]).strip() if excel_row[14] else "",
+                    "aopta_land": str(excel_row[15]).strip() if excel_row[15] else "",
+                    "aopta_org": str(excel_row[16]).strip() if excel_row[16] else "",
+                    "aopta_region": str(excel_row[17]).strip() if excel_row[17] else "",
+
+                    "aopta_t": str(excel_row[18]).strip() if excel_row[18] else "",
+                    "aopta_u": str(excel_row[19]).strip() if excel_row[19] else "",
+                    "aopta_v": str(excel_row[20]).strip() if excel_row[20] else "",
+                    "aopta_w": str(excel_row[21]).strip() if excel_row[21] else "",
+                    "aopta_x": str(excel_row[22]).strip() if excel_row[22] else "",
+                    "aopta_y": str(excel_row[23]).strip() if excel_row[23] else "",
+                    "aopta_z": str(excel_row[24]).strip() if excel_row[24] else "",
+                    "aopta_aa": str(excel_row[25]).strip() if excel_row[25] else "",
+                    "aopta_ab": str(excel_row[26]).strip() if excel_row[26] else "",
+                    "aopta_ac": str(excel_row[27]).strip() if excel_row[27] else "",
+                    "aopta_ad": str(excel_row[28]).strip() if excel_row[28] else "",
+                    "aopta_ae": str(excel_row[29]).strip() if excel_row[29] else "",
+                    "aopta_af": str(excel_row[30]).strip() if excel_row[30] else "",
+                    "aopta_ag": str(excel_row[31]).strip() if excel_row[31] else "",
+                    "aopta_ah": str(excel_row[32]).strip() if excel_row[32] else "",
+                    "aopta_ai": str(excel_row[33]).strip() if excel_row[33] else "",
                 }
                 print(row)
                 if not excel_row[5]:

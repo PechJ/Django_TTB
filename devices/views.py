@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Device
+from .models import Device, ImportStatus
 from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
@@ -18,11 +18,22 @@ from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 
 def device_list(request):
     devices = Device.objects.all().order_by("geraetename")
+    import_status = ImportStatus.objects.get(import_type="endgeraete")
+    
+    last_device_import = Device.objects.exclude(
+        datum_ttb__isnull=True
+    ).order_by("-datum_ttb").first()
 
     return render(
         request,
         "devices/device_list.html",
-        {"devices": devices},
+        {
+            "devices": devices,
+            "mcc": Constants.MCC,
+            "mnc": Constants.MNC,
+            "import_date": import_status.last_import,
+            "last_device_import": last_device_import.datum_ttb if last_device_import else None,
+        },
     )
 
 

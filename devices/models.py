@@ -34,6 +34,24 @@ class Device(models.Model):
         blank=True,
         default="",
     )
+    
+    eg_art = models.CharField(
+        max_length=10,
+        blank=True,
+        default="",
+    )
+
+    hersteller = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    eg_typ = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
 
     # ------------------------------------------------------------------
     # Funkdaten
@@ -53,6 +71,12 @@ class Device(models.Model):
 
     bos_sika_name = models.CharField(
         max_length=100,
+        blank=True,
+        default="",
+    )
+    
+    fahrzeugart = models.CharField(
+        max_length=150,
         blank=True,
         default="",
     )
@@ -104,8 +128,8 @@ class Device(models.Model):
     )
     
     bemerkung = models.TextField(
-    blank=True,
-    default="",
+        blank=True,
+        default="",
     )
 
     # ------------------------------------------------------------------
@@ -124,10 +148,60 @@ class Device(models.Model):
         default="",
     )
 
+    datum_ttb = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    # ------------------------------------------------------------------
+    # GOPTA / AOPTA
+    # ------------------------------------------------------------------
+
+    gopta_itsi = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    aopta_land = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
+
+    aopta_org = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
+
+    aopta_region = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
+
+    aopta_t = models.CharField(max_length=50, blank=True, default="")
+    aopta_u = models.CharField(max_length=50, blank=True, default="")
+    aopta_v = models.CharField(max_length=50, blank=True, default="")
+    aopta_w = models.CharField(max_length=50, blank=True, default="")
+    aopta_x = models.CharField(max_length=50, blank=True, default="")
+    aopta_y = models.CharField(max_length=50, blank=True, default="")
+    aopta_z = models.CharField(max_length=50, blank=True, default="")
+    aopta_aa = models.CharField(max_length=50, blank=True, default="")
+    aopta_ab = models.CharField(max_length=50, blank=True, default="")
+    aopta_ac = models.CharField(max_length=50, blank=True, default="")
+    aopta_ad = models.CharField(max_length=50, blank=True, default="")
+    aopta_ae = models.CharField(max_length=50, blank=True, default="")
+    aopta_af = models.CharField(max_length=50, blank=True, default="")
+    aopta_ag = models.CharField(max_length=50, blank=True, default="")
+    aopta_ah = models.CharField(max_length=50, blank=True, default="")
+    aopta_ai = models.CharField(max_length=50, blank=True, default="")
+    
     # ------------------------------------------------------------------
     # Status
     # ------------------------------------------------------------------
-
+    
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
@@ -135,10 +209,10 @@ class Device(models.Model):
     )
     
     assigned_to = models.ForeignKey(
-    User,
-    on_delete=models.SET_NULL,
-    null=True,
-    blank=True,
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     programming_date = models.DateTimeField(
