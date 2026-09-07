@@ -4,7 +4,7 @@ from enum import Enum
 class ImportType(Enum):
     ENDGERAETE = "endgeraete"
     SIRENEN = "sirenen"
-
+    PAGER = "pager"
 
 class ExcelReader:
 

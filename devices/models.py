@@ -90,6 +90,18 @@ class Device(models.Model):
         blank=True,
         default="",
     )
+    
+    dienststelle = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+    
+    heimat_dienststelle = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
 
     verwaltungsgemeinschaft = models.CharField(
         max_length=100,

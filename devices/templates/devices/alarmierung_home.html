@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Alarmierung{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+
+    <h2>Alarmierung</h2>
+
+    <p>
+        Verwaltung der Alarmierung und zugehörigen Arbeitsabläufe
+    </p>
+
+</section>
+
+<section class="tiles">
+
+    <a href="#" class="tile">
+
+        <h3>Pagerverwaltung</h3>
+
+        <p>
+            Alle Pager anzeigen und bearbeiten
+        </p>
+
+    </a>
+
+    <a href="{% url 'devices:pager_import' %}" class="tile">
+
+        <h3>Pager-Import</h3>
+
+        <p>
+            Pagerdaten aus der Herstellerdatei importieren
+        </p>
+
+    </a>
+
+    <a href="#" class="tile">
+
+        <h3>Reparaturen</h3>
+
+        <p>
+            Pager zur Reparatur geben und Rückläufer bearbeiten
+        </p>
+
+    </a>
+
+    <a href="#" class="tile">
+
+        <h3>Sirenen</h3>
+
+        <p>
+            Verwaltung und Arbeitsabläufe der Sirenen
+        </p>
+
+    </a>
+
+    <a href="#" class="tile">
+
+        <h3>Auswertungen</h3>
+
+        <p>
+            Statistiken und Übersichten
+        </p>
+
+    </a>
+
+</section>
+
+{% endblock %}

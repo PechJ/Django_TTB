@@ -28,10 +28,16 @@ urlpatterns = [
     ),
     
     path(
-    "programming/",
-    views.programming_list,
-    name="programming_list",
+        "pager-import/",
+        views.pager_import_view,
+        name="pager_import",
     ),
+    
+    path(
+        "programming/",
+        views.programming_list,
+        name="programming_list",
+        ),
     
     path(
         "programming/<int:device_id>/complete/",

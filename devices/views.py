@@ -4,7 +4,7 @@ from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
 from devices.imports.manufacturer_radio import ManufacturerImporter
-from devices.forms import ManufacturerRadioImportForm
+from devices.forms import ManufacturerRadioImportForm, PagerImportForm
 from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
 from devices.constants import DeviceConstants as Constants
@@ -14,6 +14,7 @@ from devices.exports.tactilon_radio_builder import TactilonRadioBuilder
 from devices.exports.csv_exporter import CsvExporter
 from devices.services.import_status import update_import_status
 from devices.exports.radio_directory_exporter import RadioDirectoryExporter
+from devices.imports.pager_importer import PagerImporter
 
 
 def device_list(request):
@@ -72,6 +73,44 @@ def manufacturer_import_view(request):
         },
     )
 
+
+def pager_import_view(request):
+
+    form = PagerImportForm()
+
+    if request.method == "POST":
+
+        form = PagerImportForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+
+            uploaded_file = form.cleaned_data["file"]
+
+            importer = PagerImporter(
+                uploaded_file,
+            )
+
+            result = importer.run()
+            
+            update_import_status(ImportType.PAGER)
+
+            messages.success(
+                request,
+                f"{result.created} Pager angelegt, "
+                f"{result.updated} aktualisiert."
+            )
+
+    return render(
+        request,
+        "devices/import_pager.html",
+        {
+            "form": form,
+        },
+    )
+    
     
 def import_view(request):
 
@@ -174,6 +213,14 @@ def funk_home(request):
         "devices/funk_home.html",
     )
     
+    
+def alarmierung_home(request):
+
+    return render(
+        request,
+        "devices/alarmierung_home.html",
+    )
+        
 
 def programming_list(request):
 
