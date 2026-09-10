@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Device, ImportStatus
 from django.contrib import messages
 from devices.forms import ImportForm
@@ -86,6 +86,8 @@ def pager_import_view(request):
         )
 
         if form.is_valid():
+            
+            print("PAGER-FORMULAR IST GÜLTIG")
 
             uploaded_file = form.cleaned_data["file"]
 
@@ -94,6 +96,12 @@ def pager_import_view(request):
             )
 
             result = importer.run()
+            
+            print(
+                f"PAGER-IMPORT: created={result.created}, "
+                f"updated={result.updated}, "
+                f"skipped={result.skipped}"
+            )
             
             update_import_status(ImportType.PAGER)
 
