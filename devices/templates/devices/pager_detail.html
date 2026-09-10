@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Pager bearbeiten</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <strong>TEI:</strong><br>
+        {{ device.tei }}
+    </p>
+
+    <p>
+        <strong>Pager-Name:</strong><br>
+        {{ device.geraetename }}
+    </p>
+
+    <p>
+        <strong>Firmware:</strong><br>
+        {{ device.software_version }}
+    </p>
+
+    <p>
+        <strong>ISSI:</strong><br>
+        {{ device.issi }}
+    </p>
+
+    <hr>
+
+    <p>
+        <label for="id_seriennummer">Seriennummer:</label><br>
+        <input
+            type="text"
+            id="id_seriennummer"
+            name="seriennummer"
+            value="{{ device.seriennummer }}"
+        >
+    </p>
+
+    <p>
+        <label for="id_eigentuemer">Eigentümer:</label><br>
+        <input
+            type="text"
+            id="id_eigentuemer"
+            name="eigentuemer"
+            value="{{ device.eigentuemer }}"
+        >
+    </p>
+
+    <p>
+        <label for="id_nutzer">Nutzer:</label><br>
+        <input
+            type="text"
+            id="id_nutzer"
+            name="nutzer"
+            value="{{ device.nutzer }}"
+        >
+    </p>
+
+    <p>
+        <label for="id_bemerkung">Bemerkung:</label><br>
+        <textarea
+            id="id_bemerkung"
+            name="bemerkung"
+            rows="4"
+            cols="60"
+        >{{ device.bemerkung }}</textarea>
+    </p>
+
+    <button type="submit">
+        Speichern
+    </button>
+
+</form>
+
+{% endblock %}

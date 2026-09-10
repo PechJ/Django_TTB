@@ -14,7 +14,25 @@ urlpatterns = [
         views.device_list,
         name="device_list",
     ),
+    
+    path(
+        "pager/", 
+        views.pager_list, 
+        name="pager_list"
+    ),
 
+    path(
+        "pager/<int:device_id>/",
+        views.pager_detail,
+        name="pager_detail",
+    ),
+    
+    path(
+        "pager/<int:device_id>/reparatur/",
+        views.pager_reparatur_start,
+        name="pager_reparatur_start",
+    ),
+    
     path(
         "import/",
         views.import_view,

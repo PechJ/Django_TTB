@@ -235,7 +235,87 @@ class Device(models.Model):
     def __str__(self):
         return f"{self.geraetename} ({self.tei})"
     
+
+class PagerReparatur(models.Model):
+
+    class Status(models.TextChoices):
+        OFFEN = "offen", "Offen"
+        ABGESCHLOSSEN = "abgeschlossen", "Abgeschlossen"
+
+    pager = models.ForeignKey(
+        Device,
+        on_delete=models.CASCADE,
+        related_name="reparaturen",
+    )
+
+    begonnen_am = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    zurueck_am = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.OFFEN,
+    )
+
+    symptome = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    reparaturart = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    zubehoer = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    plombennummern = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    defektbeschreibung = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    bemerkung = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    rechnungsadresse = models.TextField(
+        blank=True, 
+        default=""
+    )
     
+    artikel_modellnummer = models.CharField(
+        max_length=100, 
+        blank=True, 
+        default=""
+    )
+    
+    option_features = models.CharField(
+        max_length=255, 
+        blank=True, 
+        default=""
+    )
+
+    def __str__(self):
+        return (
+            f"Reparatur {self.pager.geraetename} "
+            f"({self.begonnen_am:%d.%m.%Y})"
+        )
+            
 class ImportStatus(models.Model):
 
     import_type = models.CharField(

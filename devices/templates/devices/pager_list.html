@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Pagerverwaltung</h1>
+
+<form method="get">
+
+<table>
+    <thead>
+        <tr>
+
+            <th>
+                <input
+                    type="text"
+                    name="tei"
+                    placeholder="TEI"
+                    value="{{ tei }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="seriennummer"
+                    placeholder="Seriennummer"
+                    value="{{ seriennummer }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="geraetename"
+                    placeholder="Pager-Name"
+                    value="{{ geraetename }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="software_version"
+                    placeholder="Firmware"
+                    value="{{ software_version }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="issi"
+                    placeholder="ISSI"
+                    value="{{ issi }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="landkreis"
+                    placeholder="Landkreis"
+                    value="{{ landkreis }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="dienststelle"
+                    placeholder="Dienststelle"
+                    value="{{ dienststelle }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="heimat_dienststelle"
+                    placeholder="Heimat-Dienststelle"
+                    value="{{ heimat_dienststelle }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="eigentuemer"
+                    placeholder="Eigentümer"
+                    value="{{ eigentuemer }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="nutzer"
+                    placeholder="Nutzer"
+                    value="{{ nutzer }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <input
+                    type="text"
+                    name="bemerkung"
+                    placeholder="Bemerkung"
+                    value="{{ bemerkung }}"
+                    autocomplete="off"
+                    oninput="clearTimeout(this.searchTimeout); this.searchTimeout = setTimeout(() => this.form.submit(), 600)"
+                >
+            </th>
+
+            <th>
+                <select
+                    name="status"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">Status</option>
+
+                    {% for value, label in devices.model.Status.choices %}
+                        <option
+                            value="{{ value }}"
+                            {% if status == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for device in devices %}
+
+        <tr>
+            <td>{{ device.tei }}</td>
+            <td>{{ device.seriennummer }}</td>
+            <td>
+                <a href="{% url 'devices:pager_detail' device.id %}">
+                    {{ device.geraetename }}
+                </a>
+            </td>
+            <td>{{ device.software_version }}</td>
+            <td>{{ device.issi }}</td>
+            <td>{{ device.landkreis }}</td>
+            <td>{{ device.dienststelle }}</td>
+            <td>{{ device.heimat_dienststelle }}</td>
+            <td>{{ device.eigentuemer }}</td>
+            <td>{{ device.nutzer }}</td>
+            <td>{{ device.bemerkung }}</td>
+            <td>{{ device.get_status_display }}</td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="12">Keine Pager gefunden.</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+
+</form>
+
+{% endblock %}

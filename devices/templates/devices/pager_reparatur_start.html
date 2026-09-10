@@ -1,0 +1,242 @@
+<form method="post">
+    {% csrf_token %}
+
+    <h3>Gerät</h3>
+
+    <p>
+        <strong>Pager:</strong> {{ device.geraetename }}
+    </p>
+
+    <p>
+        <strong>Artikel-/Modellnummer:</strong> {{ device.eg_typ }}
+    </p>
+
+    <p>
+        <strong>Seriennummer:</strong><br>
+        <input
+            type="text"
+            name="seriennummer"
+            value="{{ device.seriennummer }}"
+            {% if device.seriennummer %}readonly{% endif %}
+            required
+        >
+    </p>
+
+    <p>
+        <strong>Option (Features):</strong><br>
+        <input
+            type="text"
+            name="option_features"
+            value="siehe rechts (Leistungsmerkmale Pager)"
+            readonly
+        >
+    </p>
+
+    <hr>
+
+    <h3>Symptome</h3>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Keine Funktion">
+        Keine Funktion
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Display – Fehler">
+        Display – Fehler
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Programmierung">
+        Programmierung
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Batterie/Ladeprobleme">
+        Batterie/Ladeprobleme
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Bucht nicht ein">
+        Bucht nicht ein
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Schaden durch physischen Einfluss">
+        Schaden durch physischen Einfluss
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Kein/schlechter Empfang">
+        Kein/schlechter Empfang
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Dauerton">
+        Dauerton
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Schaden durch Flüssigkeiten">
+        Schaden durch Flüssigkeiten
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Keine/geringe Sendeleistung">
+        Keine/geringe Sendeleistung
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Keine Signalisierung">
+        Keine Signalisierung
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Schaden durch Chemikalien">
+        Schaden durch Chemikalien
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Kein Ton/geringe Lautstärke">
+        Kein Ton/geringe Lautstärke
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="symptome" value="Keine Rauschsperre">
+        Keine Rauschsperre
+    </label>
+
+    <hr>
+
+    <h3>Reparaturart</h3>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Garantie" required>
+        Garantie
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Vorabaustausch">
+        Vorabaustausch
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Kostenpflichtige Reparatur - mit Kostenvoranschlag">
+        Kostenpflichtige Reparatur - mit Kostenvoranschlag
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Erneute Reparatur (90 Tage)">
+        Erneute Reparatur (90 Tage)
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Kostenpflichtige Reparatur - kein Kostenvoranschlag">
+        Kostenpflichtige Reparatur - kein Kostenvoranschlag
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Sichere Entsorgung">
+        Sichere Entsorgung
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Upgrade auf die neueste Software">
+        Upgrade auf die neueste Software
+    </label><br>
+
+    <label>
+        <input type="radio" name="reparaturart" value="Unrepariert zurückschicken">
+        Unrepariert zurückschicken
+    </label>
+
+    <hr>
+
+    <h3>Eingeschicktes Zubehör</h3>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Batterie">
+        Batterie
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Mikrofon">
+        Mikrofon
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Sonstige">
+        Sonstige
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Trageclip">
+        Trageclip
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Antenne">
+        Antenne
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Bedienteil">
+        Bedienteil
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="zubehoer" value="Kopfhörer">
+        Kopfhörer
+    </label>
+
+    <hr>
+
+    <h3>Weitere Angaben</h3>
+
+    <p>
+        <label for="plombennummern">Plombennummern:</label><br>
+        <input
+            type="text"
+            id="plombennummern"
+            name="plombennummern"
+        >
+    </p>
+
+    <p>
+        <label for="defektbeschreibung">Defektbeschreibung:</label><br>
+        <textarea
+            id="defektbeschreibung"
+            name="defektbeschreibung"
+            rows="6"
+            cols="70"
+        ></textarea>
+    </p>
+
+    <p>
+        <label for="bemerkung">Interne Bemerkung:</label><br>
+        <textarea
+            id="bemerkung"
+            name="bemerkung"
+            rows="4"
+            cols="70"
+        ></textarea>
+    </p>
+
+    <hr>
+
+    <h3>Rechnungsadresse</h3>
+
+    <p>
+        <label for="rechnungsadresse">Rechnungsadresse:</label><br>
+        <textarea
+            id="rechnungsadresse"
+            name="rechnungsadresse"
+            rows="3"
+            cols="70"
+        ></textarea>
+    </p>
+
+    <button type="submit">
+        Reparatur starten
+    </button>
+</form>

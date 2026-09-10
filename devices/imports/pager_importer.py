@@ -53,15 +53,13 @@ class PagerImporter(BaseImporter):
             # ----------------------------------------------------------
 
             dienststelle = heimat_dienststelle
+
             landkreis = ""
 
-            if " - " in heimat_dienststelle:
-                dienststelle, landkreis = (
-                    heimat_dienststelle.rsplit(" - ", 1)
-                )
-
-                dienststelle = dienststelle.strip()
-                landkreis = landkreis.strip()
+            if pager_name.startswith("FW_") and "_P" in pager_name:
+                landkreis = pager_name[3:].split("_", 1)[0]
+            else:
+                landkreis = dienststelle
 
             # Eigentümer nur bei einem neuen Gerät setzen.
             #

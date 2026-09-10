@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from .models import Device, ImportStatus
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Device, ImportStatus, PagerReparatur
 from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
@@ -15,10 +15,14 @@ from devices.exports.csv_exporter import CsvExporter
 from devices.services.import_status import update_import_status
 from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 from devices.imports.pager_importer import PagerImporter
+from .services.pager_reparatur_pdf import PagerReparaturPdfGenerator
 
 
 def device_list(request):
-    devices = Device.objects.all().order_by("geraetename")
+    devices = Device.objects.exclude(
+        eg_typ="TPG2200"
+    ).order_by("geraetename")
+    
     import_status = ImportStatus.objects.get(import_type="endgeraete")
     
     last_device_import = Device.objects.exclude(
@@ -38,39 +42,251 @@ def device_list(request):
     )
 
 
-def manufacturer_import_view(request):
+def pager_list(request):
+    devices = Device.objects.filter(
+        eg_typ="TPG2200"
+    )
 
-    form = ManufacturerRadioImportForm()
+    tei = request.GET.get("tei", "").strip()
+    seriennummer = request.GET.get("seriennummer", "").strip()
+    geraetename = request.GET.get("geraetename", "").strip()
+    software_version = request.GET.get("software_version", "").strip()
+    issi = request.GET.get("issi", "").strip()
+    landkreis = request.GET.get("landkreis", "").strip()
+    dienststelle = request.GET.get("dienststelle", "").strip()
+    heimat_dienststelle = request.GET.get("heimat_dienststelle", "").strip()
+    eigentuemer = request.GET.get("eigentuemer", "").strip()
+    nutzer = request.GET.get("nutzer", "").strip()
+    bemerkung = request.GET.get("bemerkung", "").strip()
+    status = request.GET.get("status", "").strip()
 
-    if request.method == "POST":
+    if tei:
+        devices = devices.filter(tei__icontains=tei)
 
-        form = ManufacturerRadioImportForm(
-            request.POST,
-            request.FILES,
+    if seriennummer:
+        devices = devices.filter(
+            seriennummer__icontains=seriennummer
         )
 
-        if form.is_valid():
+    if geraetename:
+        devices = devices.filter(
+            geraetename__icontains=geraetename
+        )
 
-            uploaded_file = form.cleaned_data["file"]
+    if software_version:
+        devices = devices.filter(
+            software_version__icontains=software_version
+        )
 
-            importer = ManufacturerImporter(
-                uploaded_file,
-            )
+    if issi:
+        devices = devices.filter(issi__icontains=issi)
 
-            result = importer.run()
+    if landkreis:
+        devices = devices.filter(
+            landkreis__icontains=landkreis
+        )
 
-            messages.success(
-                request,
-                f"{result.created} Geräte angelegt, "
-                f"{result.updated} aktualisiert."
-            )
+    if dienststelle:
+        devices = devices.filter(
+            dienststelle__icontains=dienststelle
+        )
+
+    if heimat_dienststelle:
+        devices = devices.filter(
+            heimat_dienststelle__icontains=heimat_dienststelle
+        )
+
+    if eigentuemer:
+        devices = devices.filter(
+            eigentuemer__icontains=eigentuemer
+        )
+
+    if nutzer:
+        devices = devices.filter(
+            nutzer__icontains=nutzer
+        )
+
+    if bemerkung:
+        devices = devices.filter(
+            bemerkung__icontains=bemerkung
+        )
+
+    if status:
+        devices = devices.filter(status=status)
+
+    devices = devices.order_by("geraetename")
 
     return render(
         request,
-        "devices/import_radio.html",
+        "devices/pager_list.html",
         {
-            "form": form,
+            "devices": devices,
+            "tei": tei,
+            "seriennummer": seriennummer,
+            "geraetename": geraetename,
+            "software_version": software_version,
+            "issi": issi,
+            "landkreis": landkreis,
+            "dienststelle": dienststelle,
+            "heimat_dienststelle": heimat_dienststelle,
+            "eigentuemer": eigentuemer,
+            "nutzer": nutzer,
+            "bemerkung": bemerkung,
+            "status": status,
         },
+    )
+
+
+def pager_detail(request, device_id):
+
+    device = get_object_or_404(
+        Device,
+        id=device_id,
+        eg_typ="TPG2200",
+    )
+
+    if request.method == "POST":
+
+        device.seriennummer = request.POST.get(
+            "seriennummer",
+            "",
+        ).strip()
+
+        device.eigentuemer = request.POST.get(
+            "eigentuemer",
+            "",
+        ).strip()
+
+        device.nutzer = request.POST.get(
+            "nutzer",
+            "",
+        ).strip()
+
+        device.bemerkung = request.POST.get(
+            "bemerkung",
+            "",
+        ).strip()
+
+        device.save()
+
+        messages.success(
+            request,
+            f"{device.geraetename} wurde gespeichert.",
+        )
+
+        return redirect(
+            "devices:pager_detail",
+            device_id=device.id,
+        )
+
+    return render(
+        request,
+        "devices/pager_detail.html",
+        {
+            "device": device,
+        },
+    )
+
+
+def pager_reparatur_start(request, device_id):
+    device = get_object_or_404(
+        Device,
+        id=device_id,
+        eg_typ="TPG2200",
+    )
+
+    if request.method == "POST":
+
+        # Seriennummer nur dann aus dem Formular übernehmen,
+        # wenn in der Datenbank noch keine vorhanden ist.
+        if not device.seriennummer:
+            seriennummer = request.POST.get(
+                "seriennummer",
+                "",
+            ).strip()
+
+            if not seriennummer:
+                messages.error(
+                    request,
+                    "Bitte eine Seriennummer eingeben.",
+                )
+                return render(
+                    request,
+                    "devices/pager_reparatur_start.html",
+                    {"device": device},
+                )
+
+            device.seriennummer = seriennummer
+
+        # Reparaturart aus Formular holen
+        reparaturarten = request.POST.getlist("reparaturart")
+
+        # Rechnungsadresse bestimmen
+        if "Garantie" in reparaturarten:
+            rechnungsadresse = Constants.MOTOROLA_RECHNUNGSADRESSE
+        else:
+            rechnungsadresse = request.POST.get(
+                "rechnungsadresse",
+                "",
+            ).strip()
+
+            if not rechnungsadresse:
+                messages.error(
+                    request,
+                    "Bitte eine Rechnungsadresse eingeben.",
+                )
+                return render(
+                    request,
+                    "devices/pager_reparatur_start.html",
+                    {"device": device},
+                )
+
+        # Gerät auf "In Reparatur" setzen
+        device.status = Device.Status.IN_REPARATUR
+        device.save()
+
+        # Reparatur anlegen
+        reparatur = PagerReparatur.objects.create(
+            pager=device,
+            artikel_modellnummer=device.eg_typ,
+            option_features="siehe rechts (Leistungsmerkmale Pager)",
+            rechnungsadresse=rechnungsadresse,
+            symptome=request.POST.getlist("symptome"),
+            reparaturart=reparaturarten,
+            zubehoer=request.POST.getlist("zubehoer"),
+            plombennummern=request.POST.get(
+                "plombennummern",
+                "",
+            ).strip(),
+            defektbeschreibung=request.POST.get(
+                "defektbeschreibung",
+                "",
+            ).strip(),
+            bemerkung=request.POST.get(
+                "bemerkung",
+                "",
+            ).strip(),
+        )
+
+        # Reparatur-PDF erzeugen
+        PagerReparaturPdfGenerator(
+            reparatur
+        ).generate()
+
+        messages.success(
+            request,
+            f"Reparatur für {device.geraetename} wurde angelegt.",
+        )
+
+        return redirect(
+            "devices:pager_detail",
+            device_id=device.id,
+        )
+
+    return render(
+        request,
+        "devices/pager_reparatur_start.html",
+        {"device": device},
     )
 
 
@@ -104,12 +320,14 @@ def pager_import_view(request):
             )
             
             update_import_status(ImportType.PAGER)
-
+            
+            print("VOR MESSAGE")
             messages.success(
                 request,
                 f"{result.created} Pager angelegt, "
                 f"{result.updated} aktualisiert."
             )
+            print("NACH MESSAGE")
 
     return render(
         request,
