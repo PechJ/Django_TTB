@@ -15,7 +15,7 @@ from devices.exports.csv_exporter import CsvExporter
 from devices.services.import_status import update_import_status
 from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 from devices.imports.pager_importer import PagerImporter
-from .services.pager_reparatur_pdf import PagerReparaturPdfGenerator
+from .exports.pdf_exporter import PagerReparaturPdfGenerator
 
 
 def device_list(request):
@@ -196,7 +196,9 @@ def pager_reparatur_start(request, device_id):
     )
 
     if request.method == "POST":
-
+        
+        print(">>> REPARATUR POST ANGEKOMMEN")
+        
         # Seriennummer nur dann aus dem Formular übernehmen,
         # wenn in der Datenbank noch keine vorhanden ist.
         if not device.seriennummer:
@@ -287,6 +289,42 @@ def pager_reparatur_start(request, device_id):
         request,
         "devices/pager_reparatur_start.html",
         {"device": device},
+    )
+
+
+def manufacturer_import_view(request):
+
+    form = ManufacturerRadioImportForm()
+
+    if request.method == "POST":
+
+        form = ManufacturerRadioImportForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+
+            uploaded_file = form.cleaned_data["file"]
+
+            importer = ManufacturerImporter(
+                uploaded_file,
+            )
+
+            result = importer.run()
+
+            messages.success(
+                request,
+                f"{result.created} Geräte angelegt, "
+                f"{result.updated} aktualisiert."
+            )
+
+    return render(
+        request,
+        "devices/import_radio.html",
+        {
+            "form": form,
+        },
     )
 
 

@@ -73,6 +73,12 @@
         Speichern
     </button>
 
+    <a href="{% url 'devices:pager_reparatur_start' device.id %}">
+        <button type="button">
+            Reparatur starten
+        </button>
+    </a>
+
 </form>
 
 {% endblock %}
