@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Historie – {{ device.geraetename }}</h1>
+
+<p>
+    <strong>TEI:</strong> {{ device.tei }}<br>
+    <strong>ISSI:</strong> {{ device.issi }}<br>
+    <strong>Pager-Name:</strong> {{ device.geraetename }}
+</p>
+
+<hr>
+
+{% if historie %}
+
+    {% for eintrag in historie %}
+
+        <h3>
+            {{ eintrag.zeitpunkt|date:"d.m.Y H:i" }}
+            – {{ eintrag.ereignis }}
+        </h3>
+
+        <p>
+            <strong>Benutzer:</strong>
+            {% if eintrag.benutzer %}
+                {{ eintrag.benutzer.get_full_name|default:eintrag.benutzer.username }}
+            {% else %}
+                Unbekannt
+            {% endif %}
+        </p>
+
+        {% if eintrag.details %}
+            <p>
+                <strong>Details:</strong><br>
+                {{ eintrag.details|linebreaksbr }}
+            </p>
+        {% endif %}
+
+        <hr>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>Für diesen Pager gibt es noch keine Historieneinträge.</p>
+
+{% endif %}
+
+<a href="{% url 'devices:pager_detail' device.id %}">
+    Zurück zum Pager
+</a>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Pager aus Reparatur zurück</h1>
+
+<p>
+    <strong>Pager:</strong><br>
+    {{ device.geraetename }}
+</p>
+
+<p>
+    <strong>TEI:</strong><br>
+    {{ device.tei }}
+</p>
+
+<p>
+    <strong>Seriennummer:</strong><br>
+    {{ device.seriennummer }}
+</p>
+
+<hr>
+
+<p>
+    <strong>Reparatur begonnen am:</strong><br>
+    {{ reparatur.begonnen_am|date:"d.m.Y H:i" }}
+</p>
+
+<p>
+    <strong>Reparaturart:</strong><br>
+    {% for art in reparatur.reparaturart %}
+        {{ art }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+
+<p>
+    <strong>Defektbeschreibung:</strong><br>
+    {{ reparatur.defektbeschreibung|linebreaksbr }}
+</p>
+
+<hr>
+
+<p>
+    <strong>Pager wieder in Betrieb nehmen?</strong>
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+```
+<button type="submit">
+    Ja, Pager ist zurück
+</button>
+
+<a href="{% url 'devices:pager_detail' device.id %}">
+    <button type="button">
+        Abbrechen
+    </button>
+</a>
+```
+
+</form>
+
+{% endblock %}

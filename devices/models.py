@@ -330,3 +330,39 @@ class ImportStatus(models.Model):
 
     def __str__(self):
         return f"{self.import_type}: {self.last_import}"
+    
+    
+class Historie(models.Model):
+
+    geraet = models.ForeignKey(
+        Device,
+        on_delete=models.CASCADE,
+        related_name="historie",
+    )
+
+    zeitpunkt = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    benutzer = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    ereignis = models.CharField(
+        max_length=100,
+    )
+
+    details = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    def __str__(self):
+        return (
+            f"{self.geraet.geraetename} – "
+            f"{self.ereignis} "
+            f"({self.zeitpunkt:%d.%m.%Y %H:%M})"
+        )

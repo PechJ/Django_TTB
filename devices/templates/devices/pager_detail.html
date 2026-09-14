@@ -7,78 +7,109 @@
 <form method="post">
     {% csrf_token %}
 
-    <p>
-        <strong>TEI:</strong><br>
-        {{ device.tei }}
-    </p>
+```
+<p>
+    <strong>TEI:</strong><br>
+    {{ device.tei }}
+</p>
 
-    <p>
-        <strong>Pager-Name:</strong><br>
-        {{ device.geraetename }}
-    </p>
+<p>
+    <strong>Pager-Name:</strong><br>
+    {{ device.geraetename }}
+</p>
 
-    <p>
-        <strong>Firmware:</strong><br>
-        {{ device.software_version }}
-    </p>
+<p>
+    <strong>Firmware:</strong><br>
+    {{ device.software_version }}
+</p>
 
-    <p>
-        <strong>ISSI:</strong><br>
-        {{ device.issi }}
-    </p>
+<p>
+    <strong>ISSI:</strong><br>
+    {{ device.issi }}
+</p>
 
-    <hr>
+<hr>
 
-    <p>
-        <label for="id_seriennummer">Seriennummer:</label><br>
-        <input
-            type="text"
-            id="id_seriennummer"
-            name="seriennummer"
-            value="{{ device.seriennummer }}"
-        >
-    </p>
+<p>
+    <label for="id_seriennummer">Seriennummer:</label><br>
+    <input
+        type="text"
+        id="id_seriennummer"
+        name="seriennummer"
+        value="{{ device.seriennummer }}"
+    >
+</p>
 
-    <p>
-        <label for="id_eigentuemer">Eigentümer:</label><br>
-        <input
-            type="text"
-            id="id_eigentuemer"
-            name="eigentuemer"
-            value="{{ device.eigentuemer }}"
-        >
-    </p>
+<p>
+    <label for="id_eigentuemer">Eigentümer:</label><br>
+    <input
+        type="text"
+        id="id_eigentuemer"
+        name="eigentuemer"
+        value="{{ device.eigentuemer }}"
+    >
+</p>
 
-    <p>
-        <label for="id_nutzer">Nutzer:</label><br>
-        <input
-            type="text"
-            id="id_nutzer"
-            name="nutzer"
-            value="{{ device.nutzer }}"
-        >
-    </p>
+<p>
+    <label for="id_nutzer">Nutzer:</label><br>
+    <input
+        type="text"
+        id="id_nutzer"
+        name="nutzer"
+        value="{{ device.nutzer }}"
+    >
+</p>
 
-    <p>
-        <label for="id_bemerkung">Bemerkung:</label><br>
-        <textarea
-            id="id_bemerkung"
-            name="bemerkung"
-            rows="4"
-            cols="60"
-        >{{ device.bemerkung }}</textarea>
-    </p>
+<p>
+    <label for="id_bemerkung">Bemerkung:</label><br>
+    <textarea
+        id="id_bemerkung"
+        name="bemerkung"
+        rows="4"
+        cols="60"
+    >{{ device.bemerkung }}</textarea>
+</p>
 
-    <button type="submit">
-        Speichern
+<button type="submit">
+    Speichern
+</button>
+
+<a href="{% url 'devices:pager_reparatur_start' device.id %}">
+    <button type="button">
+        Reparatur starten
     </button>
-
-    <a href="{% url 'devices:pager_reparatur_start' device.id %}">
-        <button type="button">
-            Reparatur starten
-        </button>
-    </a>
+</a>
+<a href="{% url 'devices:pager_historie' device.id %}">
+    <button type="button">
+        Historie
+    </button>
+</a>
+```
 
 </form>
+
+{% if reparatur %} <hr>
+
+```
+<h2>Reparatur</h2>
+
+<p>
+    <strong>Status:</strong>
+    {{ reparatur.get_status_display }}
+</p>
+
+<p>
+    <strong>Begonnen am:</strong>
+    {{ reparatur.begonnen_am|date:"d.m.Y H:i" }}
+</p>
+
+<a href="{% url 'devices:pager_reparatur_rueckkehr' reparatur.id %}">
+    <button type="button">
+        Pager aus Reparatur zurück
+    </button>
+</a>
+```
+
+{% endif %}
 
 {% endblock %}

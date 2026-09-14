@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Device, ImportStatus, PagerReparatur
+from .models import Device, ImportStatus, PagerReparatur, Historie
 from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
@@ -16,6 +16,7 @@ from devices.services.import_status import update_import_status
 from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 from devices.imports.pager_importer import PagerImporter
 from .exports.pdf_exporter import PagerReparaturPdfGenerator
+from django.utils import timezone
 
 
 def device_list(request):
@@ -137,6 +138,29 @@ def pager_list(request):
     )
 
 
+def pager_historie(request, device_id):
+    device = get_object_or_404(
+        Device,
+        id=device_id,
+        eg_typ="TPG2200",
+    )
+
+    historie = Historie.objects.filter(
+        geraet=device,
+    ).order_by(
+        "-zeitpunkt",
+    )
+
+    return render(
+        request,
+        "devices/pager_historie.html",
+        {
+            "device": device,
+            "historie": historie,
+        },
+    )
+
+
 def pager_detail(request, device_id):
 
     device = get_object_or_404(
@@ -179,10 +203,64 @@ def pager_detail(request, device_id):
             device_id=device.id,
         )
 
+    reparatur = PagerReparatur.objects.filter(
+        pager=device,
+        status=PagerReparatur.Status.OFFEN,
+    ).order_by("-begonnen_am").first()
+
     return render(
         request,
         "devices/pager_detail.html",
         {
+            "device": device,
+            "reparatur": reparatur,
+        },
+    )
+
+
+def pager_reparatur_rueckkehr(request, reparatur_id):
+    reparatur = get_object_or_404(
+        PagerReparatur,
+        id=reparatur_id,
+        status=PagerReparatur.Status.OFFEN,
+    )
+
+    device = reparatur.pager
+
+    if request.method == "POST":
+
+        # Reparatur abschließen
+        reparatur.status = PagerReparatur.Status.ABGESCHLOSSEN
+        reparatur.zurueck_am = timezone.now()
+        reparatur.save()
+
+        # Historie schreiben
+        Historie.objects.create(
+            geraet=device,
+            benutzer=request.user if request.user.is_authenticated else None,
+            ereignis="Reparatur abgeschlossen",
+            details="Pager aus Reparatur zurück und wieder in Betrieb.",
+        )
+
+        # Pager wieder in Betrieb nehmen
+        device.status = Device.Status.IN_BETRIEB
+        device.save()
+
+        messages.success(
+            request,
+            f"{device.geraetename} ist wieder in Betrieb.",
+        )
+
+        return redirect(
+            "devices:pager_detail",
+            device_id=device.id,
+        )
+
+    return render(
+        request,
+        "devices/pager_reparatur_rueckkehr.html",
+        {
+            "reparatur": reparatur,
             "device": device,
         },
     )
@@ -268,6 +346,18 @@ def pager_reparatur_start(request, device_id):
                 "bemerkung",
                 "",
             ).strip(),
+        )
+
+        Historie.objects.create(
+            geraet=device,
+            benutzer=request.user if request.user.is_authenticated else None,
+            ereignis="Reparatur gestartet",
+            details=(
+                f"Reparaturart: {', '.join(reparaturarten)}\n"
+                f"Symptome: {', '.join(reparatur.symptome)}\n"
+                f"Defektbeschreibung: {reparatur.defektbeschreibung}\n"
+                f"Interne Bemerkung: {reparatur.bemerkung}"
+            ),
         )
 
         # Reparatur-PDF erzeugen

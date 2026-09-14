@@ -62,4 +62,22 @@ urlpatterns = [
         views.programming_complete,
         name="programming_complete",
     ),
+    
+    path(
+        "pager/reparatur/<int:reparatur_id>/rueckkehr/",
+        views.pager_reparatur_rueckkehr,
+        name="pager_reparatur_rueckkehr",
+    ),
+    
+    path(
+        "pager/reparatur/[int:reparatur_id](int:reparatur_id)/rueckkehr/",
+        views.pager_reparatur_rueckkehr,
+        name="pager_reparatur_rueckkehr",
+    ),
+
+    path(
+        "pager/<int:device_id>/historie/",
+        views.pager_historie,
+        name="pager_historie",
+    ),
 ]
