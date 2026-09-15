@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Device, ImportStatus, PagerReparatur, Historie
+from .models import Device, ImportStatus, PagerReparatur, Historie, Checkliste, Checklistenpunkt
 from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
@@ -42,6 +42,35 @@ def device_list(request):
         },
     )
 
+
+def dashboard(request):
+    devices = Device.objects.exclude(
+        eg_typ="TPG2200"
+    ).prefetch_related("checklisten__punkte")
+
+    offene_checklisten = []
+
+    for device in devices:
+        checkliste = (
+            device.checklisten
+            .order_by("-import_am", "-id")
+            .first()
+        )
+
+        if checkliste and not checkliste.vollstaendig:
+            offene_checklisten.append({
+                "device": device,
+                "checkliste": checkliste,
+            })
+
+    return render(
+        request,
+        "devices/dashboard.html",
+        {
+            "offene_checklisten": offene_checklisten,
+        },
+    )
+    
 
 def pager_list(request):
     devices = Device.objects.filter(
@@ -615,3 +644,132 @@ def programming_complete(request, device_id):
 
     return redirect("devices:programming_list")
 
+
+def device_detail(request, device_id):
+    device = get_object_or_404(
+        Device.objects.exclude(eg_typ="TPG2200"),
+        id=device_id,
+    )
+
+    checkliste = (
+        device.checklisten
+        .prefetch_related("punkte")
+        .order_by("-import_am", "-id")
+        .first()
+    )
+
+    return render(
+        request,
+        "devices/device_detail.html",
+        {
+            "device": device,
+            "checkliste": checkliste,
+        },
+    )
+    
+    
+def checklist_punkt_toggle(request, device_id, punkt_id):
+    if request.method != "POST":
+        return redirect("devices:device_detail", device_id=device_id)
+
+    device = get_object_or_404(
+        Device.objects.exclude(eg_typ="TPG2200"),
+        id=device_id,
+    )
+
+    checkliste = get_object_or_404(
+        Checkliste,
+        geraet=device,
+        id=request.POST.get("checkliste_id"),
+    )
+
+    punkt = get_object_or_404(
+        Checklistenpunkt,
+        id=punkt_id,
+        checkliste=checkliste,
+    )
+
+    # Persönliche Abholung
+    if punkt.code == "PERSOENLICHE_ABHOLUNG" and not punkt.erledigt:
+        punkt.erledigt = True
+        punkt.erledigt_am = timezone.now()
+        punkt.erledigt_von = (
+            request.user if request.user.is_authenticated else None
+        )
+        punkt.save()
+
+        # Die beiden Postversand-Punkte werden nicht mehr benötigt.
+        checkliste.punkte.filter(
+            code__in=[
+                "POSTVERSAND_GESPERRT",
+                "POSTVERSAND_ENTSPERRT",
+            ]
+        ).update(erforderlich=False)
+
+        return redirect(
+            "devices:device_detail",
+            device_id=device_id,
+        )
+
+    # Funkgerät programmiert
+    if punkt.code == "FUNKGERAET_PROGRAMMIERT" and not punkt.erledigt:
+        punkt.erledigt = True
+        punkt.erledigt_am = timezone.now()
+        punkt.erledigt_von = (
+            request.user if request.user.is_authenticated else None
+        )
+        punkt.save()
+
+        # Aktuelle Programmversion im Gerät hinterlegen
+        device.software_version = Constants.REQUIRED_FIRMWARE
+        device.programming_date = timezone.now()
+        device.assigned_to = (
+            request.user if request.user.is_authenticated else None
+        )
+
+        device.save(
+            update_fields=[
+                "software_version",
+                "programming_date",
+                "assigned_to",
+            ]
+        )
+
+        # Historie
+        Historie.objects.create(
+            geraet=device,
+            benutzer=(
+                request.user
+                if request.user.is_authenticated
+                else None
+            ),
+            ereignis="Funkgerät programmiert",
+            details=(
+                f"Programmversion: "
+                f"{Constants.REQUIRED_FIRMWARE}"
+            ),
+        )
+
+        return redirect(
+            "devices:device_detail",
+            device_id=device_id,
+        )
+
+    # Normaler Checklistenpunkt
+    punkt.erledigt = not punkt.erledigt
+
+    if punkt.erledigt:
+        punkt.erledigt_am = timezone.now()
+        punkt.erledigt_von = (
+            request.user if request.user.is_authenticated else None
+        )
+    else:
+        punkt.erledigt_am = None
+        punkt.erledigt_von = None
+
+    punkt.save()
+
+    return redirect(
+        "devices:device_detail",
+        device_id=device_id,
+    )

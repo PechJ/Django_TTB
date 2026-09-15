@@ -366,3 +366,54 @@ class Historie(models.Model):
             f"{self.ereignis} "
             f"({self.zeitpunkt:%d.%m.%Y %H:%M})"
         )
+        
+
+class Checkliste(models.Model):
+    geraet = models.ForeignKey(
+        Device,
+        on_delete=models.CASCADE,
+        related_name="checklisten",
+    )
+    
+    import_am = models.DateTimeField(null=True, blank=True)
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+    abgeschlossen_am = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Checkliste – {self.geraet.geraetename}"
+
+    @property
+    def vollstaendig(self):
+        return not self.punkte.filter(
+            erforderlich=True,
+            erledigt=False,
+        ).exists()
+
+
+class Checklistenpunkt(models.Model):
+    checkliste = models.ForeignKey(
+        Checkliste,
+        on_delete=models.CASCADE,
+        related_name="punkte",
+    )
+
+    code = models.CharField(max_length=50)
+    bezeichnung = models.CharField(max_length=255)
+
+    erledigt = models.BooleanField(default=False)
+    erforderlich = models.BooleanField(default=True)
+
+    erledigt_am = models.DateTimeField(null=True, blank=True)
+    erledigt_von = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="erledigte_checklistenpunkte",
+    )
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self):
+        return f"{self.bezeichnung} – {self.checkliste.geraet.geraetename}"

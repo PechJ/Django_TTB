@@ -1,0 +1,159 @@
+<h1>Funkgerät</h1>
+
+<h2>{{ device.funkrufname }}</h2>
+
+<h3>Gerätedaten</h3>
+
+<table border="1">
+    <tr>
+        <th>Datum TTB</th>
+        <td>{{ device.datum_ttb|date:"d.m.Y H:i" }}</td>
+    </tr>
+
+    <tr>
+        <th>EG-Art</th>
+        <td>{{ device.eg_art }}</td>
+    </tr>
+
+    <tr>
+        <th>Hersteller</th>
+        <td>{{ device.hersteller }}</td>
+    </tr>
+
+    <tr>
+        <th>EG-Typ</th>
+        <td>{{ device.eg_typ }}</td>
+    </tr>
+
+    <tr>
+        <th>Seriennummer</th>
+        <td>{{ device.seriennummer }}</td>
+    </tr>
+
+    <tr>
+        <th>TEI</th>
+        <td>{{ device.tei }}</td>
+    </tr>
+
+    <tr>
+        <th>ISSI</th>
+        <td>{{ device.issi }}</td>
+    </tr>
+
+    <tr>
+        <th>BOS-SiKa-Nummer</th>
+        <td>{{ device.bos_sika_nummer }}</td>
+    </tr>
+
+    <tr>
+        <th>BOS-SiKa-Name</th>
+        <td>{{ device.bos_sika_name }}</td>
+    </tr>
+
+    <tr>
+        <th>Landkreis</th>
+        <td>{{ device.landkreis }}</td>
+    </tr>
+
+    <tr>
+        <th>Kommune</th>
+        <td>{{ device.kommune }}</td>
+    </tr>
+
+    <tr>
+        <th>Organisationsart</th>
+        <td>{{ device.organisationsart }}</td>
+    </tr>
+
+    <tr>
+        <th>Organisationsname</th>
+        <td>{{ device.organisationsname }}</td>
+    </tr>
+
+    <tr>
+        <th>Fahrzeugart / Standort</th>
+        <td>{{ device.fahrzeugart }}</td>
+    </tr>
+
+    <tr>
+        <th>Funkrufname</th>
+        <td>{{ device.funkrufname }}</td>
+    </tr>
+
+    <tr>
+        <th>Verwendung</th>
+        <td>{{ device.verwendung }}</td>
+    </tr>
+
+    <tr>
+        <th>Software-Version</th>
+        <td>{{ device.software_version }}</td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td>{{ device.get_status_display }}</td>
+    </tr>
+</table>
+
+
+{% if checkliste %}
+
+<h3>Checkliste</h3>
+
+<p>
+    Import:
+    {{ checkliste.import_am|date:"d.m.Y H:i" }}
+</p>
+
+{% if checkliste.vollstaendig %}
+    <p><strong>Checkliste vollständig</strong></p>
+{% else %}
+    <p><strong>Checkliste noch nicht vollständig</strong></p>
+{% endif %}
+
+<table border="1">
+    <tr>
+        <th>Erledigt</th>
+        <th>Punkt</th>
+    </tr>
+
+    {% for punkt in checkliste.punkte.all %}
+    <tr>
+        <td>
+            {% if punkt.erforderlich %}
+                <form method="post"
+                    action="{% url 'devices:checklist_punkt_toggle' device.id punkt.id %}">
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="checkliste_id"
+                        value="{{ checkliste.id }}"
+                    >
+
+                    <button type="submit">
+                        {% if punkt.erledigt %}
+                            ☑
+                        {% else %}
+                            ☐
+                        {% endif %}
+                    </button>
+                </form>
+            {% else %}
+            –
+        {% endif %}
+    </td>
+
+    <td>
+        {{ punkt.bezeichnung }}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+{% else %}
+
+<p>Für dieses Gerät existiert noch keine Checkliste.</p>
+
+{% endif %}

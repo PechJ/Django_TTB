@@ -40,7 +40,11 @@
         <td>{{ device.bos_sika_nummer }}</td>
         <td>{{ device.bos_sika_name }}</td>
         <td>{{ device.fahrzeugart }}</td>
-        <td>{{ device.funkrufname }}</td>
+        <td>
+            <a href="{% url 'devices:device_detail' device.id %}">
+                {{ device.funkrufname }}
+            </a>
+        </td>
         <td>{{ device.verwendung }}</td>
         <td>{{ device.get_status_display }}</td>
         <td>{{ device.software_version }}</td>

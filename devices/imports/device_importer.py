@@ -1,6 +1,6 @@
 from devices.models import Device
 from django.utils import timezone
-
+from devices.services.checklist import create_checklist
 
 class DeviceImporter:
 
@@ -56,7 +56,10 @@ class DeviceImporter:
                     "aopta_ai": row["aopta_ai"],
                     },
                 )
-            
+            checkliste = create_checklist(
+                device=device,
+                import_date=import_date,
+            )
             if created:
                 self.created += 1
             else:

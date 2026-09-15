@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h1>Dashboard</h1>
+
+<h2>Offene Gerätebearbeitungen</h2>
+
+{% if offene_checklisten %}
+
+    <ul>
+        {% for eintrag in offene_checklisten %}
+            <li>
+                <a href="{% url 'devices:device_detail' eintrag.device.id %}">
+                    {{ eintrag.device.funkrufname }}
+                </a>
+                – {{ eintrag.device.organisationsname }}
+                – {{ eintrag.device.landkreis }}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+
+    <p>🎉 Keine offenen Gerätebearbeitungen.</p>
+
+{% endif %}
+
+</body>
+</html>

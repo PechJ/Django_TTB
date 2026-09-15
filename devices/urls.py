@@ -80,4 +80,20 @@ urlpatterns = [
         views.pager_historie,
         name="pager_historie",
     ),
+    
+    path(
+        "geraet/<int:device_id>/",
+        views.device_detail,
+        name="device_detail",
+    ),
+    path(
+        "geraet/<int:device_id>/checkliste/<int:punkt_id>/toggle/",
+        views.checklist_punkt_toggle,
+        name="checklist_punkt_toggle",
+    ),
+    path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard",
+    ),
 ]
