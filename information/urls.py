@@ -1,7 +1,11 @@
 from django.urls import path
+from devices import views as device_views
 
-from . import views
 
 urlpatterns = [
-    path("", views.home, name="information-home"),
+    path(
+        "",
+        device_views.dashboard,
+        name="information-home",
+    ),
 ]

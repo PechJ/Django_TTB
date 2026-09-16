@@ -417,3 +417,129 @@ class Checklistenpunkt(models.Model):
 
     def __str__(self):
         return f"{self.bezeichnung} – {self.checkliste.geraet.geraetename}"
+    
+    
+class SirenStammdaten(models.Model):
+    device = models.OneToOneField(
+        Device,
+        on_delete=models.CASCADE,
+        related_name="siren_stammdaten",
+    )
+
+    gemeinde = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    ortsteil = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    standort_adresse = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
+
+    laufende_nummer = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+    )
+
+    feueralarm = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+    )
+
+    warnung = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+    )
+
+    sirenenprobe = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+    )
+    
+    breitengrad = models.DecimalField(
+        max_digits=10,
+        decimal_places=7,
+        null=True,
+        blank=True,
+    )
+
+    laengengrad = models.DecimalField(
+        max_digits=10,
+        decimal_places=7,
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return (
+            f"Sirenen-Stammdaten – "
+            f"{self.device.geraetename}"
+        )
+        
+
+class SirenFRTStatus(models.Model):
+    class Status(models.TextChoices):
+        BEANTRAGT = "beantragt", "Beantragt"
+        FREIGEGEBEN = "freigegeben", "Freigegeben"
+        FERTIG = "fertig", "Fertig"
+
+    sirene = models.OneToOneField(
+        SirenStammdaten,
+        on_delete=models.CASCADE,
+        related_name="frt_status",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.BEANTRAGT,
+    )
+
+    antragsdatum = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    freigabedatum = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    fertigmeldedatum = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    suchkreisname = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    as_kommentar = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    bemerkung_ttb = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    def __str__(self):
+        return (
+            f"FRT-Status – "
+            f"{self.sirene.device.geraetename}"
+        )

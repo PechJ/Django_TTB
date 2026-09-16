@@ -43,7 +43,9 @@ class ExcelReader:
 
         # Gerätetabelle beginnt bei Zeile 18
         title = str(sheet["A2"].value or "")
-        if "Endgeräte" in title:
+        title_lower = title.lower()
+
+        if "endgeräte" in title_lower:
             for excel_row in sheet.iter_rows(min_row=18, values_only=True):
                 opta = "".join(
                     str(excel_row[i]).strip()
@@ -106,8 +108,133 @@ class ExcelReader:
 
             return rows, ImportType.ENDGERAETE
     
-        elif "Sirenen" in title:
-            
+        elif "sirenen" in title_lower:
+
+            for excel_row in sheet.iter_rows(
+                min_row=18,
+                values_only=True,
+            ):
+                if not excel_row[5]:
+                    break
+
+                gemeinde = str(kommune).strip() if kommune else ""
+
+                ortsteil_oder_gemeinde = (
+                    str(excel_row[13]).strip()
+                    if excel_row[13]
+                    else ""
+                )
+
+                if ortsteil_oder_gemeinde == gemeinde:
+                    ortsteil = ""
+                else:
+                    ortsteil = ortsteil_oder_gemeinde
+
+                row = {
+                    "landkreis": str(excel_row[12]).strip()
+                    if excel_row[12] else "",
+
+                    "kommune": gemeinde,
+
+                    "organisationsart": str(
+                        excel_row[11]
+                    ).strip()
+                    if excel_row[11] else "",
+
+                    "organisationsname": str(
+                        organisationsname
+                    ).strip()
+                    if organisationsname else "",
+
+                    "eg_art": str(excel_row[1]).strip()
+                    if excel_row[1] else "",
+
+                    "hersteller": str(excel_row[2]).strip()
+                    if excel_row[2] else "",
+
+                    "eg_typ": str(excel_row[3]).strip()
+                    if excel_row[3] else "",
+
+                    "seriennummer": str(
+                        excel_row[4]
+                    ).strip()
+                    if excel_row[4] else "",
+
+                    "tei": str(excel_row[5]).strip()
+                    if excel_row[5] else "",
+
+                    "issi": str(excel_row[8]).strip()
+                    if excel_row[8] else "",
+
+                    "sika-nummer": str(
+                        excel_row[9]
+                    ).strip()
+                    if excel_row[9] else "",
+
+                    "sika-name": str(
+                        excel_row[10]
+                    ).strip()
+                    if excel_row[10] else "",
+
+                    "fahrzeugart": "",
+                    "funkrufname": "",
+                    "verwendung": "",
+
+                    "gopta_itsi": "",
+                    "aopta_land": "",
+                    "aopta_org": "",
+                    "aopta_region": "",
+                    "aopta_t": "",
+                    "aopta_u": "",
+                    "aopta_v": "",
+                    "aopta_w": "",
+                    "aopta_x": "",
+                    "aopta_y": "",
+                    "aopta_z": "",
+                    "aopta_aa": "",
+                    "aopta_ab": "",
+                    "aopta_ac": "",
+                    "aopta_ad": "",
+                    "aopta_ae": "",
+                    "aopta_af": "",
+                    "aopta_ag": "",
+                    "aopta_ah": "",
+                    "aopta_ai": "",
+
+                    "siren_stammdaten": {
+                        "gemeinde": gemeinde,
+                        "ortsteil": ortsteil,
+
+                        "standort_adresse": str(
+                            excel_row[14]
+                        ).strip()
+                        if excel_row[14] else "",
+
+                        "laufende_nummer": str(
+                            excel_row[15]
+                        ).strip()
+                        if excel_row[15] else "",
+
+                        "feueralarm": str(
+                            excel_row[16]
+                        ).strip()
+                        if excel_row[16] else "",
+
+                        "warnung": str(
+                            excel_row[17]
+                        ).strip()
+                        if excel_row[17] else "",
+
+                        "sirenenprobe": str(
+                            excel_row[18]
+                        ).strip()
+                        if excel_row[18] else "",
+                    },
+                }
+
+                print(row)
+                rows.append(row)
+
             return rows, ImportType.SIRENEN
         
         else:

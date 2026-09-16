@@ -17,6 +17,7 @@ from devices.exports.radio_directory_exporter import RadioDirectoryExporter
 from devices.imports.pager_importer import PagerImporter
 from .exports.pdf_exporter import PagerReparaturPdfGenerator
 from django.utils import timezone
+from devices.imports.siren_importer import SirenImporter
 
 
 def device_list(request):
@@ -512,7 +513,13 @@ def import_view(request):
 
             rows, import_type = ExcelReader(uploaded_file).read()
 
-            validator = InputValidator(rows)
+            print("DEBUG InputValidator:", InputValidator)
+            print("DEBUG init:", InputValidator.__init__)
+            
+            validator = InputValidator(
+                rows,
+                import_type=import_type,
+            )
 
             errors = validator.validate()
 
@@ -561,8 +568,14 @@ def import_view(request):
                     print(filepath)
 
                 elif import_type == ImportType.SIRENEN:
-                    importer = SirenImporter(rows)
-                    exporter = SirenenExporter()
+
+                        importer = SirenImporter(rows)
+
+                        result = importer.run()
+
+                        update_import_status(
+                            ImportType.SIRENEN
+                        )
 
                 else:
                     messages.error(

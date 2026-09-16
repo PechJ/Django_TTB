@@ -1,14 +1,22 @@
 from devices.constants import Landkreise, Organisationsarten, ValidationRules
 from devices.reference_data import get_gemeinde
+from devices.imports.excel_reader import ImportType
 
 
-REQUIRED_FIELDS = (
+REQUIRED_FIELDS_ENDGERAETE = (
     "tei",
     "landkreis",
     "kommune",
     "organisationsart",
     "organisationsname",
     "funkrufname",
+)
+
+REQUIRED_FIELDS_SIRENEN = (
+    "tei",
+    "landkreis",
+    "kommune",
+    "organisationsart",
 )
 
 
@@ -20,8 +28,9 @@ class InputValidator:
     Er prüft ausschließlich die fachliche Gültigkeit der Eingabedaten.
     """
 
-    def __init__(self, rows):
+    def __init__(self, rows, import_type=ImportType.ENDGERAETE):
         self.rows = rows
+        self.import_type = import_type
         self.errors = []
 
     def validate(self):
@@ -31,23 +40,29 @@ class InputValidator:
         self.validate_kommune()
         self.validate_organisationsart()
         self.validate_tei()
-        self.validate_opta()
 
+        if self.import_type == ImportType.ENDGERAETE:
+            self.validate_opta()
 
         return self.errors
-    
+
     def add_error(self, row, field, message):
         self.errors.append({
-        "row": row,
-        "field": field,
-        "message": message,
+            "row": row,
+            "field": field,
+            "message": message,
         })
 
     def validate_required_fields(self):
 
+        if self.import_type == ImportType.SIRENEN:
+            required_fields = REQUIRED_FIELDS_SIRENEN
+        else:
+            required_fields = REQUIRED_FIELDS_ENDGERAETE
+
         for row_number, row in enumerate(self.rows, start=2):
 
-            for field in REQUIRED_FIELDS:
+            for field in required_fields:
 
                 value = row.get(field, "").strip()
 
@@ -55,9 +70,9 @@ class InputValidator:
                     self.add_error(
                         row_number,
                         field,
-                        "Pflichtfeld ist leer."
+                        "Pflichtfeld ist leer.",
                     )
-    
+
     def validate_landkreis(self):
 
         for row_number, row in enumerate(self.rows, start=2):
@@ -71,50 +86,9 @@ class InputValidator:
                 self.add_error(
                     row_number,
                     "landkreis",
-                    f"Ungültiger Landkreis: {landkreis}"
+                    f"Ungültiger Landkreis: {landkreis}",
                 )
-    
-    def validate_kommune(self):
 
-        for row_number, row in enumerate(self.rows, start=2):
-
-            landkreis = row.get("landkreis", "").strip()
-            kommune = row.get("kommune", "").strip()
-
-            if not landkreis or not kommune:
-                continue
-
-            gemeinde = get_gemeinde(
-                landkreis,
-                kommune,
-            )
-
-            if gemeinde is None:
-                self.add_error(
-                    row_number,
-                    "kommune",
-                    (
-                        f"'{kommune}' gehört "
-                        f"nicht zum Landkreis '{landkreis}'."
-                    ),
-                )
-                
-    def validate_organisationsart(self):
-
-        for row_number, row in enumerate(self.rows, start=2):
-
-            organisationsart = row.get("organisationsart", "").strip()
-
-            if not organisationsart:
-                continue
-
-            if organisationsart not in Organisationsarten.ALL:
-                self.add_error(
-                    row_number,
-                    "organisationsart",
-                    f"Ungültige Organisationsart: {organisationsart}"
-                )
-                
     def validate_kommune(self):
 
         for row_number, row in enumerate(self.rows, start=2):
@@ -140,7 +114,38 @@ class InputValidator:
                         f"'{landkreis}' nicht."
                     ),
                 )
-                
+
+    def validate_organisationsart(self):
+
+        for row_number, row in enumerate(self.rows, start=2):
+
+            organisationsart = row.get(
+                "organisationsart",
+                "",
+            ).strip()
+
+            if not organisationsart:
+                continue
+
+            if self.import_type == ImportType.SIRENEN:
+                if organisationsart != "FW":
+                    self.add_error(
+                        row_number,
+                        "organisationsart",
+                        (
+                            f"Ungültige Organisationsart "
+                            f"für Sirene: {organisationsart}"
+                        ),
+                    )
+                continue
+
+            if organisationsart not in Organisationsarten.ALL:
+                self.add_error(
+                    row_number,
+                    "organisationsart",
+                    f"Ungültige Organisationsart: {organisationsart}",
+                )
+
     def validate_tei(self):
 
         for row_number, row in enumerate(self.rows, start=2):
@@ -168,27 +173,30 @@ class InputValidator:
                         f"Ziffern enthalten."
                     ),
                 )
-                
+
     def validate_opta(self):
-        
+
         for row_number, row in enumerate(self.rows, start=2):
 
             opta = row.get("opta", "").strip()
             kommune = row.get("kommune", "").strip()
             landkreis = row.get("landkreis", "").strip()
 
-            gemeinde = get_gemeinde(landkreis, kommune)
+            gemeinde = get_gemeinde(
+                landkreis,
+                kommune,
+            )
 
             if gemeinde is None:
-                self.add_error(
-                    row_number,
-                    f"Gemeinde '{kommune}' im Landkreis '{landkreis}' nicht gefunden."
-                )
                 continue
 
             if opta != gemeinde.opta:
                 self.add_error(
                     row_number,
                     "kommune",
-                    f"OPTA '{opta}' stimmt nicht mit der Referenz '{gemeinde.opta}' überein."
+                    (
+                        f"OPTA '{opta}' stimmt nicht "
+                        f"mit der Referenz "
+                        f"'{gemeinde.opta}' überein."
+                    ),
                 )

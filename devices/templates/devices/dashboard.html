@@ -3,30 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .summary {
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .info {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #1f6feb;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background: #1557b0;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
+
 <body>
 
 <h1>Dashboard</h1>
 
-<h2>Offene Gerätebearbeitungen</h2>
+<div class="summary">
+    {% if offene_checklisten %}
+        🔔 {{ offene_checklisten|length }} offene Gerätebearbeitung{{ offene_checklisten|length|pluralize }}
+    {% else %}
+        ✅ Keine offenen Gerätebearbeitungen
+    {% endif %}
+</div>
+
 
 {% if offene_checklisten %}
 
-    <ul>
-        {% for eintrag in offene_checklisten %}
-            <li>
-                <a href="{% url 'devices:device_detail' eintrag.device.id %}">
-                    {{ eintrag.device.funkrufname }}
-                </a>
-                – {{ eintrag.device.organisationsname }}
-                – {{ eintrag.device.landkreis }}
-            </li>
-        {% endfor %}
-    </ul>
+    {% for eintrag in offene_checklisten %}
+
+        <div class="card">
+
+            <h2>
+                {{ eintrag.device.funkrufname }}
+            </h2>
+
+            <div class="info">
+                {{ eintrag.device.organisationsname }}
+                {% if eintrag.device.landkreis %}
+                    · {{ eintrag.device.landkreis }}
+                {% endif %}
+            </div>
+
+            <a
+                class="button"
+                href="{% url 'devices:device_detail' eintrag.device.id %}"
+            >
+                Bearbeitung öffnen
+            </a>
+
+        </div>
+
+    {% endfor %}
 
 {% else %}
 
-    <p>🎉 Keine offenen Gerätebearbeitungen.</p>
+    <div class="empty">
+        🎉 Alle aktuellen Gerätebearbeitungen sind abgeschlossen.
+    </div>
 
 {% endif %}
 
