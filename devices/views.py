@@ -18,6 +18,7 @@ from devices.imports.pager_importer import PagerImporter
 from .exports.pdf_exporter import PagerReparaturPdfGenerator
 from django.utils import timezone
 from devices.imports.siren_importer import SirenImporter
+from alarmierung.imports.siren_importer import SirenFRTAntragImporter, SirenFRTFreigabeImporter
 
 
 def device_list(request):
@@ -494,7 +495,69 @@ def pager_import_view(request):
             "form": form,
         },
     )
-    
+
+
+def frt_import_view(request):
+
+    form = ImportForm()
+
+    if request.method == "POST":
+
+        form = ImportForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+
+            uploaded_file = form.cleaned_data["file"]
+
+            rows, import_type = ExcelReader(
+                uploaded_file
+            ).read()
+
+            if import_type == ImportType.FRT_ANTRAG:
+
+                importer = SirenFRTAntragImporter(rows)
+                result = importer.run()
+
+                messages.success(
+                    request,
+                    (
+                        f"{result.created} FRT-Anträge verarbeitet. "
+                        f"{result.status_created} Sirenen zugeordnet, "
+                        f"{result.waiting_created} warten auf Zuordnung."
+                    )
+                )
+
+            elif import_type == ImportType.FRT_FREIGABE:
+
+                importer = SirenFRTFreigabeImporter(rows)
+                result = importer.run()
+
+                messages.success(
+                    request,
+                    (
+                        f"{result.updated} FRT-Freigaben verarbeitet. "
+                        f"{result.not_found} nicht zugeordnet."
+                    )
+                )
+
+            else:
+
+                messages.error(
+                    request,
+                    "Die Datei enthält kein erkanntes FRT-Tabellenblatt."
+                )
+
+    return render(
+        request,
+        "devices/frt_import.html",
+        {
+            "form": form,
+        },
+    )
+        
     
 def import_view(request):
 
@@ -512,6 +575,55 @@ def import_view(request):
             uploaded_file = form.cleaned_data["file"]
 
             rows, import_type = ExcelReader(uploaded_file).read()
+            
+                        # -------------------------------------------------
+            # FRT-IMPORTS
+            # -------------------------------------------------
+
+            if import_type == ImportType.FRT_ANTRAG:
+
+                importer = SirenFRTAntragImporter(rows)
+
+                result = importer.run()
+
+                messages.success(
+                    request,
+                    (
+                        f"{result.created} FRT-Anträge verarbeitet. "
+                        f"{result.status_created} Sirenen zugeordnet, "
+                        f"{result.waiting_created} warten auf Zuordnung."
+                    )
+                )
+
+                return render(
+                    request,
+                    "devices/import.html",
+                    {
+                        "form": form,
+                    },
+                )
+
+            elif import_type == ImportType.FRT_FREIGABE:
+
+                importer = FRTFreigabeImporter(rows)
+
+                result = importer.run()
+
+                messages.success(
+                    request,
+                    (
+                        f"{result.updated} FRT-Freigaben verarbeitet. "
+                        f"{result.not_found} nicht zugeordnet."
+                    )
+                )
+
+                return render(
+                    request,
+                    "devices/import.html",
+                    {
+                        "form": form,
+                    },
+                )
 
             print("DEBUG InputValidator:", InputValidator)
             print("DEBUG init:", InputValidator.__init__)

@@ -5,6 +5,8 @@ class ImportType(Enum):
     ENDGERAETE = "endgeraete"
     SIRENEN = "sirenen"
     PAGER = "pager"
+    FRT_ANTRAG = "frt_antrag"
+    FRT_FREIGABE = "frt_freigabe"
 
 class ExcelReader:
 
@@ -33,6 +35,30 @@ class ExcelReader:
 
         sheet = workbook.active
 
+                # -----------------------------------------------------
+                # FRT-IMPORTS
+                # -----------------------------------------------------
+
+        if "FRT_Import_Netsite_Pega" in workbook.sheetnames:
+
+            from alarmierung.imports.siren_excel_reader import (
+                SirenExcelReader
+            )
+
+            rows = SirenExcelReader(self.file).read()
+
+            return rows, ImportType.FRT_ANTRAG
+
+        if "FRT-Daten" in workbook.sheetnames:
+
+            from alarmierung.imports.siren_excel_reader import (
+                SirenExcelReader
+            )
+
+            rows = SirenExcelReader(self.file).read()
+
+            return rows, ImportType.FRT_FREIGABE
+        
         # Stammdaten aus dem Formular
         landkreis = sheet["D4"].value
         kommune = sheet["D6"].value

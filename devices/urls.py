@@ -86,6 +86,7 @@ urlpatterns = [
         views.device_detail,
         name="device_detail",
     ),
+    
     path(
         "geraet/<int:device_id>/checkliste/<int:punkt_id>/toggle/",
         views.checklist_punkt_toggle,
@@ -95,5 +96,23 @@ urlpatterns = [
         "dashboard/",
         views.dashboard,
         name="dashboard",
+    ),
+    
+    path(
+        "frt-import/",
+        views.frt_import_view,
+        name="frt_import",
+    ),
+    
+    path(
+    "pager-import/",
+    views.pager_import_view,
+    name="pager_import",
+    ),
+
+    path(
+        "frt-import/",
+        views.frt_import_view,
+        name="frt_import",
     ),
 ]
