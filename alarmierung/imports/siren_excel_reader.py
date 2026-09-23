@@ -1,4 +1,6 @@
 from openpyxl import load_workbook
+from django.utils import timezone
+from datetime import datetime
 
 
 class SirenExcelReader:
@@ -183,20 +185,26 @@ class SirenExcelReader:
             row = {
                 # E
                 "suchkreisname": self._text(
-                    excel_row[4]
+                    excel_row[5]
                 ),
 
-                # AB
+               # AC
                 "as_kommentar": self._text(
-                    excel_row[27]
+                    excel_row[28]
                 ),
 
-                # AC
-                "freigabedatum": excel_row[28],
+                # AD
+                "freigabedatum": (
+                    timezone.make_aware(excel_row[29])
+                    if isinstance(excel_row[29], datetime)
+                    else datetime.fromisoformat(excel_row[29])
+                    if excel_row[29]
+                    else None
+                ),
 
-                # AE
+                # AF
                 "zuteilungsnummer": self._text(
-                    excel_row[30]
+                    excel_row[31]
                 ),
             }
 

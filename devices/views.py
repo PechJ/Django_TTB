@@ -4,7 +4,7 @@ from django.contrib import messages
 from devices.forms import ImportForm
 from devices.validators.input_validator import InputValidator
 from devices.imports.manufacturer_radio import ManufacturerImporter
-from devices.forms import ManufacturerRadioImportForm, PagerImportForm
+from devices.forms import ManufacturerRadioImportForm, PagerImportForm, ManufacturerForm
 from devices.imports.excel_reader import ExcelReader
 from devices.imports.device_importer import DeviceImporter
 from devices.constants import DeviceConstants as Constants
@@ -18,7 +18,10 @@ from devices.imports.pager_importer import PagerImporter
 from .exports.pdf_exporter import PagerReparaturPdfGenerator
 from django.utils import timezone
 from devices.imports.siren_importer import SirenImporter
-from alarmierung.imports.siren_importer import SirenFRTAntragImporter, SirenFRTFreigabeImporter
+from alarmierung.imports.siren_importer import SirenFRTAntragImporter, SirenFRTFreigabeImporter, erkenne_frt_dateityp
+from datetime import datetime
+from alarmierung.imports.fertigmeldung_reader import FertigmeldungReader
+from alarmierung.imports.fertigmeldung_importer import FertigmeldungImporter
 
 
 def device_list(request):
@@ -500,26 +503,37 @@ def pager_import_view(request):
 def frt_import_view(request):
 
     form = ImportForm()
+    manufacturer_form = ManufacturerForm()
 
     if request.method == "POST":
 
-        form = ImportForm(
-            request.POST,
-            request.FILES,
-        )
+        # -------------------------------------------------
+        # Hersteller wurde ausgewählt
+        # -------------------------------------------------
+        if request.POST.get("confirm_frt_antrag"):
+            
+            manufacturer_form = ManufacturerForm(request.POST)
 
-        if form.is_valid():
+            if manufacturer_form.is_valid():
 
-            uploaded_file = form.cleaned_data["file"]
+                rows = request.session.get("frt_antrag_rows", [])
 
-            rows, import_type = ExcelReader(
-                uploaded_file
-            ).read()
+                for row in rows:
+                    if row.get("antragsdatum"):
+                        row["antragsdatum"] = datetime.fromisoformat(
+                            row["antragsdatum"]
+                        )
 
-            if import_type == ImportType.FRT_ANTRAG:
+                hersteller = manufacturer_form.cleaned_data["hersteller"]
 
-                importer = SirenFRTAntragImporter(rows)
+                importer = SirenFRTAntragImporter(
+                    rows,
+                    hersteller=hersteller,
+                )
+
                 result = importer.run()
+
+                request.session.pop("frt_antrag_rows", None)
 
                 messages.success(
                     request,
@@ -530,31 +544,127 @@ def frt_import_view(request):
                     )
                 )
 
-            elif import_type == ImportType.FRT_FREIGABE:
-
-                importer = SirenFRTFreigabeImporter(rows)
-                result = importer.run()
-
-                messages.success(
+                return render(
                     request,
-                    (
-                        f"{result.updated} FRT-Freigaben verarbeitet. "
-                        f"{result.not_found} nicht zugeordnet."
+                    "devices/frt_import.html",
+                    {
+                        "form": ImportForm(),
+                    },
+                )
+
+        # -------------------------------------------------
+        # Neue Datei wird hochgeladen
+        # -------------------------------------------------
+        else:
+
+            form = ImportForm(
+                request.POST,
+                request.FILES,
+            )
+
+            if form.is_valid():
+
+                uploaded_file = form.cleaned_data["file"]
+                
+                dateityp = erkenne_frt_dateityp(uploaded_file)
+
+                if dateityp == "HAEUSLER_FERTIGMELDUNG":
+                    fertigmeldung = FertigmeldungReader(uploaded_file).read()
+
+                    importer = FertigmeldungImporter([fertigmeldung])
+                    result = importer.run()
+
+                    messages.success(
+                        request,
+                        (
+                            f"{result.updated} Fertigmeldung verarbeitet. "
+                            f"{result.not_found} nicht zugeordnet."
+                        )
                     )
-                )
 
-            else:
+                    return render(
+                        request,
+                        "devices/frt_import.html",
+                        {"form": ImportForm()},
+                    )
 
-                messages.error(
-                    request,
-                    "Die Datei enthält kein erkanntes FRT-Tabellenblatt."
-                )
+                if dateityp == "HOERMANN_FERTIGMELDUNG":
+                    fertigmeldungen = FertigmeldungReader(uploaded_file).read()
+
+                    importer = FertigmeldungImporter(fertigmeldungen)
+                    result = importer.run()
+
+                    messages.success(
+                        request,
+                        (
+                            f"{result.updated} Fertigmeldungen verarbeitet. "
+                            f"{result.not_found} nicht zugeordnet."
+                        )
+                    )
+
+                    return render(
+                        request,
+                        "devices/frt_import.html",
+                        {"form": ImportForm()},
+                    )
+
+                rows, import_type = ExcelReader(uploaded_file).read()
+
+                if import_type == ImportType.FRT_ANTRAG:
+
+                    session_rows = []
+
+                    for row in rows:
+                        session_row = row.copy()
+
+                        if session_row.get("antragsdatum"):
+                            session_row["antragsdatum"] = session_row["antragsdatum"].isoformat()
+
+                        session_rows.append(session_row)
+
+                    request.session["frt_antrag_rows"] = session_rows
+
+                    return render(
+                        request,
+                        "devices/frt_import.html",
+                        {
+                            "form": form,
+                            "manufacturer_form": ManufacturerForm(),
+                            "show_manufacturer": True,
+                            "manufacturer_for": "frt_antrag",
+                        },
+                    )
+
+                elif import_type == ImportType.FRT_FREIGABE:
+
+                    importer = SirenFRTFreigabeImporter(rows)
+
+                    result = importer.run()
+                
+                    messages.success(
+                        request,
+                        (
+                            f"{result.updated} FRT-Freigaben verarbeitet. "
+                            f"{result.not_found} nicht zugeordnet."
+                        )
+                    )
+
+                    return render(
+                            request,
+                            "devices/sirenen.html",
+                            {
+                                "form": ImportForm(),
+                                "frt_freigaben": rows,
+                            },
+                        )
 
     return render(
         request,
         "devices/frt_import.html",
         {
             "form": form,
+            "manufacturer_form": manufacturer_form,
+            "show_manufacturer": False,
         },
     )
         
@@ -605,7 +715,7 @@ def import_view(request):
 
             elif import_type == ImportType.FRT_FREIGABE:
 
-                importer = FRTFreigabeImporter(rows)
+                importer = SirenFRTFreigabeImporter(rows)
 
                 result = importer.run()
 

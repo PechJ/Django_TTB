@@ -1,5 +1,6 @@
 from devices.models import Device, SirenStammdaten
 from django.utils import timezone
+from alarmierung.imports.siren_importer import pending_siren
 
 
 class SirenImporter:
@@ -52,5 +53,6 @@ class SirenImporter:
                 self.created += 1
             else:
                 self.updated += 1
-
+                
+        pending_siren()
         return self

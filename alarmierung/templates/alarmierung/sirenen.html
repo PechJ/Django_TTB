@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Sirenen{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+
+    <h2>Sirenen</h2>
+
+    <p>
+        Übersicht der Sirenen und des FRT-Status
+    </p>
+
+</section>
+
+<section>
+
+    <table id="sirenen-tabelle">
+
+        <thead>
+
+            <tr>
+                <th>Gemeinde</th>
+                <th>Ortsteil</th>
+                <th>Standort</th>
+                <th>Lfd. Nr.</th>
+                <th>Feueralarm</th>
+                <th>Warnung</th>
+                <td>
+                    {% if eintrag.sirene.breitengrad and eintrag.sirene.laengengrad %}
+                        <a href="https://www.openstreetmap.org/?mlat={{ eintrag.sirene.breitengrad }}&mlon={{ eintrag.sirene.laengengrad }}"
+                        target="_blank">
+                            Karte
+                        </a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if eintrag.sirene.breitengrad and eintrag.sirene.laengengrad %}
+                        {{ eintrag.sirene.laengengrad }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <th>Längengrad</th>
+                <th>Suchkreisname</th>
+                <th>FRT-Status</th>
+                <th>Freigabedatum</th>
+                <th>Zuteilungsnummer</th>
+                <th>Zuordnung</th>
+            </tr>
+
+            <tr class="filter-zeile">
+
+                <th>
+                    <input type="text" data-filter="0" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="1" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="2" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="3" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="4" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="5" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="6" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="7" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="8" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="9" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="10" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="11" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="12" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="13" placeholder="Filtern...">
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for eintrag in status %}
+
+            <tr>
+
+                <td>{{ eintrag.sirene.gemeinde }}</td>
+
+                <td>{{ eintrag.sirene.ortsteil }}</td>
+
+                <td>{{ eintrag.sirene.standort_adresse }}</td>
+
+                <td>{{ eintrag.sirene.laufende_nummer }}</td>
+
+                <td>{{ eintrag.sirene.feueralarm }}</td>
+
+                <td>{{ eintrag.sirene.warnung }}</td>
+
+                <td>{{ eintrag.sirene.sirenenprobe }}</td>
+
+                <td>{{ eintrag.sirene.breitengrad|default:"—" }}</td>
+
+                <td>{{ eintrag.sirene.laengengrad|default:"—" }}</td>
+
+                <td>{{ eintrag.suchkreisname|default:"—" }}</td>
+
+                <td>{{ eintrag.get_status_display }}</td>
+
+                <td>
+                    {% if eintrag.freigabedatum %}
+                        {{ eintrag.freigabedatum|date:"d.m.Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>{{ eintrag.zuteilungsnummer|default:"—" }}</td>
+
+                <td>zugeordnet</td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="14">
+                    Keine Sirenen vorhanden.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+
+<script>
+
+document.querySelectorAll("#sirenen-tabelle [data-filter]").forEach(function(filter) {
+
+    filter.addEventListener("input", function() {
+
+        const filters = document.querySelectorAll(
+            "#sirenen-tabelle [data-filter]"
+        );
+
+        const rows = document.querySelectorAll(
+            "#sirenen-tabelle tbody tr"
+        );
+
+        rows.forEach(function(row) {
+
+            let sichtbar = true;
+
+            filters.forEach(function(filter) {
+
+                const spalte = filter.dataset.filter;
+                const suchtext = filter.value.toLowerCase().trim();
+
+                if (!suchtext) {
+                    return;
+                }
+
+                const zelle = row.cells[spalte];
+
+                if (!zelle) {
+                    return;
+                }
+
+                const text = zelle.textContent.toLowerCase();
+
+                if (!text.includes(suchtext)) {
+                    sichtbar = false;
+                }
+
+            });
+
+            row.style.display = sichtbar ? "" : "none";
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

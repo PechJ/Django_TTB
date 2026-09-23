@@ -60,6 +60,7 @@ class DeviceImporter:
                 device=device,
                 import_date=import_date,
             )
+            
             if created:
                 self.created += 1
             else:

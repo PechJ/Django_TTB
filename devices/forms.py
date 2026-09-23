@@ -21,3 +21,15 @@ class ImportForm(forms.Form):
         label="Importdatei",
         required=True,
     )
+    
+    
+class ManufacturerForm(forms.Form):
+
+    hersteller = forms.ChoiceField(
+        label="Hersteller",
+        choices=[
+            ("Haeusler", "Häusler"),
+            ("Hoermann", "Hörmann"),
+        ],
+        required=True,
+    )

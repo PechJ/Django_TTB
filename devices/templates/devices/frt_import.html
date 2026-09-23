@@ -5,33 +5,74 @@
 {% block content %}
 
 <section class="welcome">
-
-```
-<h2>FRT-Import</h2>
-
-<p>
-    FRT-Anträge und Freigaben aus den Excel-Dateien importieren.
-</p>
-```
-
+    <h2>FRT-Import</h2>
+    <p>FRT-Anträge und Freigaben aus den Excel-Dateien importieren.</p>
 </section>
+
+{% if not show_manufacturer %}
 
 <section class="import-section">
 
-```
-<form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    {% csrf_token %}
+        {{ form.as_p }}
 
-    {{ form.as_p }}
-
-    <button type="submit">
-        Datei importieren
-    </button>
-
-</form>
-```
+        <button type="submit">
+            Datei importieren
+        </button>
+    </form>
 
 </section>
+
+{% endif %}
+
+{% if show_manufacturer %}
+
+<section class="import-section">
+
+    <h3>Hersteller auswählen</h3>
+
+    {% if manufacturer_for == "frt_antrag" %}
+
+        <p>
+            Die hochgeladene Datei wurde als
+            <strong>FRT-Antrag</strong> erkannt.
+            Bitte wählen Sie den Hersteller aus.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ manufacturer_form.as_p }}
+
+            <button type="submit" name="confirm_frt_antrag" value="1">
+                Antrag importieren
+            </button>
+        </form>
+
+    {% else %}
+
+        <p>
+            Die hochgeladene Datei wurde als
+            <strong>FRT-Freigabeantrag</strong> erkannt.
+            Bitte wählen Sie den Hersteller aus.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ manufacturer_form.as_p }}
+
+            <button type="submit" name="confirm_freigabe" value="1">
+                Freigabe importieren
+            </button>
+        </form>
+
+    {% endif %}
+
+</section>
+
+{% endif %}
 
 {% endblock %}

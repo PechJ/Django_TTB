@@ -81,9 +81,49 @@ class SirenFRTAntrag(models.Model):
     erstellt_am = models.DateTimeField(
         auto_now_add=True,
     )
+    
+    hersteller = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
 
     def __str__(self):
         return (
             f"FRT-Antrag – "
             f"{self.suchkreisname or self.strasse}"
+        )
+        
+        
+class SirenFRTFreigabePending(models.Model):
+    suchkreisname = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    freigabedatum = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    as_kommentar = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    zuteilungsnummer = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
+
+    erstellt_am = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def __str__(self):
+        return (
+            f"FRT-Freigabe wartet – "
+            f"{self.suchkreisname}"
         )

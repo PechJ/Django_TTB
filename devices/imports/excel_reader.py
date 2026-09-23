@@ -7,6 +7,7 @@ class ImportType(Enum):
     PAGER = "pager"
     FRT_ANTRAG = "frt_antrag"
     FRT_FREIGABE = "frt_freigabe"
+    FERTIGMELDUNG = "fertigmeldung"
 
 class ExcelReader:
 
@@ -60,6 +61,7 @@ class ExcelReader:
             return rows, ImportType.FRT_FREIGABE
         
         # Stammdaten aus dem Formular
+        
         landkreis = sheet["D4"].value
         kommune = sheet["D6"].value
         organisationsart = sheet["D7"].value

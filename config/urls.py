@@ -14,7 +14,7 @@ urlpatterns = [
 
     path("devices/", include("devices.urls")),
     path("funk/", include("funk.urls")),
-    path("alarmierung/", include("devices.urls")),
+    path("alarmierung/", include("alarmierung.urls")),
     path("information/", include("information.urls")),
 
     path("admin/", admin.site.urls),

@@ -1,5 +1,36 @@
-from alarmierung.models import SirenFRTAntrag
+from alarmierung.models import SirenFRTAntrag, SirenFRTFreigabePending
 from devices.models import SirenStammdaten, SirenFRTStatus
+from pathlib import Path
+from openpyxl import load_workbook
+
+
+def erkenne_frt_dateityp(uploaded_file):
+    suffix = Path(uploaded_file.name).suffix.lower()
+
+    if suffix == ".pdf":
+        return "HAEUSLER_FERTIGMELDUNG"
+
+    if suffix not in [".xlsx", ".xlsm"]:
+        return None
+
+    workbook = load_workbook(
+        uploaded_file,
+        read_only=True,
+        data_only=True,
+    )
+
+    sheetnames = workbook.sheetnames
+
+    if "FRT_Import_Netsite_Pega" in sheetnames:
+        return "FRT_ANTRAG"
+
+    if "FRT-Daten" in sheetnames:
+        return "FRT_FREIGABE"
+
+    if "Tabelle1" in sheetnames:
+        return "HOERMANN_FERTIGMELDUNG"
+
+    return None
 
 
 def normalisiere_adresse(adresse):
@@ -58,8 +89,9 @@ def finde_sirene(antrag):
 
 class SirenFRTAntragImporter:
 
-    def __init__(self, rows):
+    def __init__(self, rows, hersteller):
         self.rows = rows
+        self.hersteller = hersteller
         self.created = 0
         self.status_created = 0
         self.waiting_created = 0
@@ -90,7 +122,36 @@ class SirenFRTAntragImporter:
 
                 sirene = sirenen[0]
 
-                SirenFRTStatus.objects.update_or_create(
+                def dms_zu_dezimal(grad, minuten, sekunden):
+                    if grad is None:
+                        return None
+
+                    return (
+                        float(grad)
+                        + float(minuten or 0) / 60
+                        + float(sekunden or 0) / 3600
+                    )
+
+                sirene.breitengrad = dms_zu_dezimal(
+                    antrag.breitengrad_grad,
+                    antrag.breitengrad_min,
+                    antrag.breitengrad_sek,
+                )
+
+                sirene.laengengrad = dms_zu_dezimal(
+                    antrag.laengengrad_grad,
+                    antrag.laengengrad_min,
+                    antrag.laengengrad_sek,
+                )
+
+                sirene.save(
+                    update_fields=[
+                        "breitengrad",
+                        "laengengrad",
+                    ]
+                )
+
+                status, _ = SirenFRTStatus.objects.update_or_create(
                     sirene=sirene,
                     defaults={
                         "status": SirenFRTStatus.Status.BEANTRAGT,
@@ -99,19 +160,53 @@ class SirenFRTAntragImporter:
                     },
                 )
 
+                apply_pending_freigabe(status)
+
                 self.status_created += 1
-
-            else:
-
-                antrag.save()
-
-                self.waiting_created += 1
-
-            self.created += 1
 
         return self
     
-    
+
+def normalisiere_suchkreisname(name):
+    if not name:
+        return ""
+
+    name = name.strip()
+
+    if name.lower().startswith("sirene "):
+        name = name[7:]
+
+    return name.strip().lower()
+
+
+def pending_siren():
+    processed = 0
+
+    for antrag in SirenFRTAntrag.objects.all():
+
+        sirenen = finde_sirene(antrag)
+
+        if len(sirenen) != 1:
+            continue
+
+        sirene = sirenen[0]
+
+        status, _ = SirenFRTStatus.objects.update_or_create(
+            sirene=sirene,
+            defaults={
+                "status": SirenFRTStatus.Status.BEANTRAGT,
+                "antragsdatum": antrag.antragsdatum,
+                "suchkreisname": antrag.suchkreisname,
+            },
+        )
+
+        apply_pending_freigabe(status)
+        
+        antrag.delete()
+        processed += 1
+
+    return processed
+
 class SirenFRTFreigabeImporter:
 
     def __init__(self, rows):
@@ -129,17 +224,32 @@ class SirenFRTFreigabeImporter:
             
             print("FRT FREIGABE:", repr(suchkreisname))
 
-            status = (
-                SirenFRTStatus.objects
-                .filter(
-                    suchkreisname=suchkreisname
-                )
-                .first()
+            suchkreisname_freigabe = normalisiere_suchkreisname(
+                suchkreisname
             )
+
+            status = None
+
+            for kandidat in SirenFRTStatus.objects.all():
+
+                if (
+                    normalisiere_suchkreisname(kandidat.suchkreisname)
+                    == suchkreisname_freigabe
+                ):
+                    status = kandidat
+                    break
 
             print("GEFUNDENER STATUS:", status)
             
             if not status:
+                SirenFRTFreigabePending.objects.update_or_create(
+                    suchkreisname=suchkreisname_freigabe,
+                    defaults={
+                        "freigabedatum": row["freigabedatum"],
+                        "as_kommentar": row["as_kommentar"],
+                        "zuteilungsnummer": row["zuteilungsnummer"],
+                    },
+                )
                 self.not_found += 1
                 continue
 
@@ -154,7 +264,35 @@ class SirenFRTFreigabeImporter:
                     "as_kommentar",
                 ]
             )
-
+            
             self.updated += 1
 
         return self
+    
+    
+def apply_pending_freigabe(status):
+    suchkreisname = normalisiere_suchkreisname(
+        status.suchkreisname
+    )
+
+    freigabe = SirenFRTFreigabePending.objects.filter(
+        suchkreisname=suchkreisname
+    ).first()
+
+    if not freigabe:
+        return False
+
+    status.status = SirenFRTStatus.Status.FREIGEGEBEN
+    status.freigabedatum = freigabe.freigabedatum
+    status.as_kommentar = freigabe.as_kommentar
+    status.save(
+        update_fields=[
+            "status",
+            "freigabedatum",
+            "as_kommentar",
+        ]
+    )
+
+    freigabe.delete()
+
+    return True

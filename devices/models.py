@@ -537,6 +537,12 @@ class SirenFRTStatus(models.Model):
         blank=True,
         default="",
     )
+    
+    zuteilungsnummer = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+    )
 
     def __str__(self):
         return (

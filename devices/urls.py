@@ -105,9 +105,9 @@ urlpatterns = [
     ),
     
     path(
-    "pager-import/",
-    views.pager_import_view,
-    name="pager_import",
+        "pager-import/",
+        views.pager_import_view,
+        name="pager_import",
     ),
 
     path(
