@@ -1,4 +1,10 @@
-<h1>Herstellerimport</h1>
+{% extends "base.html" %}
+
+{% block title %}Funkgeräte{% endblock %}
+
+{% block content %}
+
+<h1>Import Selectric-csv</h1>
 
 <form method="post" enctype="multipart/form-data">
 
@@ -7,7 +13,9 @@
     {{ form.as_p }}
 
     <button type="submit">
-        Herstellerdatei importieren
+        csv importieren
     </button>
 
 </form>
+
+{% endblock %}

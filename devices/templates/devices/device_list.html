@@ -1,53 +1,275 @@
-<h1>Funkgeräte</h1>
+{% extends "base.html" %}
 
-<h2>Geräte</h2>
-<p>Letzter Geräteimport: {{ last_device_import|date:"d.m.Y H:i" }}</p>
-<p>{{ devices|length }} Geräte vorhanden.</p>
+{% block title %}Funkgeräte{% endblock %}
 
-<table border="1">
-    <tr>
-        <th>Datum TTB</th>
-        <th>Datum ILS</th>
-        <th>EG-Art</th>
-        <th>Hersteller</th>
-        <th>EG-Typ</th>
-        <th>Seriennummer</th>
-        <th>TEI</th>
-        <th>MCC</th>
-        <th>MNC</th>
-        <th>ISSI</th>
-        <th>BOS-SiKa-Nummer</th>
-        <th>BOS-SiKa-Name</th>
-        <th>Fahrzeugart/Standort</th>
-        <th>Funkrufname</th>
-        <th>Verwendung</th>
-        <th>Status</th>
-        <th>Software</th>
-    </tr>
+{% block content %}
 
-    {% for device in devices %}
-    <tr>
-        <td>{{ device.datum_ttb|date:"d.m.Y H:i" }}</td>
-        <td>{{ device.datum_ils }}</td>
-        <td>{{ device.eg_art }}</td>
-        <td>{{ device.hersteller }}</td>
-        <td>{{ device.eg_typ }}</td>
-        <td>{{ device.seriennummer }}</td>
-        <td>{{ device.tei }}</td>
-        <td>{{ mcc }}</td>
-        <td>{{ mnc }}</td>
-        <td>{{ device.issi }}</td>
-        <td>{{ device.bos_sika_nummer }}</td>
-        <td>{{ device.bos_sika_name }}</td>
-        <td>{{ device.fahrzeugart }}</td>
-        <td>
-            <a href="{% url 'devices:device_detail' device.id %}">
-                {{ device.funkrufname }}
-            </a>
-        </td>
-        <td>{{ device.verwendung }}</td>
-        <td>{{ device.get_status_display }}</td>
-        <td>{{ device.software_version }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<section class="welcome">
+
+    <h2>Funkgeräte</h2>
+
+    <p>
+        Übersicht der Funkgeräte
+    </p>
+
+    <p>
+        Letzter Geräteimport:
+        {{ last_device_import|date:"d.m.Y H:i" }}
+    </p>
+
+    <p>
+        {{ devices|length }} Geräte vorhanden.
+    </p>
+
+</section>
+
+
+<section>
+
+    <table id="funkgeraete-tabelle">
+
+        <thead>
+
+            <tr>
+                <th>Datum TTB</th>
+                <th>Datum ILS</th>
+                <th>EG-Art</th>
+                <th>Hersteller</th>
+                <th>EG-Typ</th>
+                <th>Seriennummer</th>
+                <th>TEI</th>
+                <th>MCC</th>
+                <th>MNC</th>
+                <th>ISSI</th>
+                <th>BOS-SiKa-Nummer</th>
+                <th>BOS-SiKa-Name</th>
+                <th>Fahrzeugart/Standort</th>
+                <th>Funkrufname</th>
+                <th>Verwendung</th>
+                <th>Status</th>
+                <th>Software</th>
+            </tr>
+
+
+            <tr class="filter-zeile">
+
+                <th>
+                    <input type="text" data-filter="0" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="1" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="2" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="3" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="4" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="5" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="6" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="7" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="8" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="9" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="10" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="11" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="12" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="13" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="14" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="15" placeholder="Filtern...">
+                </th>
+
+                <th>
+                    <input type="text" data-filter="16" placeholder="Filtern...">
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for device in devices %}
+
+            <tr>
+
+                <td>
+                    {{ device.datum_ttb|date:"d.m.Y H:i" }}
+                </td>
+
+                <td>
+                    {{ device.datum_ils }}
+                </td>
+
+                <td>
+                    {{ device.eg_art }}
+                </td>
+
+                <td>
+                    {{ device.hersteller }}
+                </td>
+
+                <td>
+                    {{ device.eg_typ }}
+                </td>
+
+                <td>
+                    {{ device.seriennummer }}
+                </td>
+
+                <td>
+                    {{ device.tei }}
+                </td>
+
+                <td>
+                    {{ mcc }}
+                </td>
+
+                <td>
+                    {{ mnc }}
+                </td>
+
+                <td>
+                    {{ device.issi }}
+                </td>
+
+                <td>
+                    {{ device.bos_sika_nummer }}
+                </td>
+
+                <td>
+                    {{ device.bos_sika_name }}
+                </td>
+
+                <td>
+                    {{ device.fahrzeugart }}
+                </td>
+
+                <td>
+                    <a href="{% url 'devices:device_detail' device.id %}">
+                        {{ device.funkrufname }}
+                    </a>
+                </td>
+
+                <td>
+                    {{ device.verwendung }}
+                </td>
+
+                <td>
+                    {{ device.get_status_display }}
+                </td>
+
+                <td>
+                    {{ device.software_version }}
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="17">
+                    Keine Funkgeräte vorhanden.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+
+<script>
+
+document.querySelectorAll("#funkgeraete-tabelle [data-filter]").forEach(function(filter) {
+
+    filter.addEventListener("input", function() {
+
+        const filters = document.querySelectorAll(
+            "#funkgeraete-tabelle [data-filter]"
+        );
+
+        const rows = document.querySelectorAll(
+            "#funkgeraete-tabelle tbody tr"
+        );
+
+        rows.forEach(function(row) {
+
+            let sichtbar = true;
+
+            filters.forEach(function(filter) {
+
+                const spalte = filter.dataset.filter;
+                const suchtext = filter.value.toLowerCase().trim();
+
+                if (!suchtext) {
+                    return;
+                }
+
+                const zelle = row.cells[spalte];
+
+                if (!zelle) {
+                    return;
+                }
+
+                const text = zelle.textContent.toLowerCase();
+
+                if (!text.includes(suchtext)) {
+                    sichtbar = false;
+                }
+
+            });
+
+            row.style.display = sichtbar ? "" : "none";
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

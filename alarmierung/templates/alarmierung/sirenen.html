@@ -25,26 +25,8 @@
                 <th>Ortsteil</th>
                 <th>Standort</th>
                 <th>Lfd. Nr.</th>
-                <th>Feueralarm</th>
-                <th>Warnung</th>
-                <td>
-                    {% if eintrag.sirene.breitengrad and eintrag.sirene.laengengrad %}
-                        <a href="https://www.openstreetmap.org/?mlat={{ eintrag.sirene.breitengrad }}&mlon={{ eintrag.sirene.laengengrad }}"
-                        target="_blank">
-                            Karte
-                        </a>
-                    {% else %}
-                        —
-                    {% endif %}
-                </td>
-
-                <td>
-                    {% if eintrag.sirene.breitengrad and eintrag.sirene.laengengrad %}
-                        {{ eintrag.sirene.laengengrad }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </td>
+                <th>issi</th>
+                <th>Breitengrad</th>
                 <th>Längengrad</th>
                 <th>Suchkreisname</th>
                 <th>FRT-Status</th>
@@ -103,14 +85,6 @@
                     <input type="text" data-filter="11" placeholder="Filtern...">
                 </th>
 
-                <th>
-                    <input type="text" data-filter="12" placeholder="Filtern...">
-                </th>
-
-                <th>
-                    <input type="text" data-filter="13" placeholder="Filtern...">
-                </th>
-
             </tr>
 
         </thead>
@@ -129,11 +103,7 @@
 
                 <td>{{ eintrag.sirene.laufende_nummer }}</td>
 
-                <td>{{ eintrag.sirene.feueralarm }}</td>
-
-                <td>{{ eintrag.sirene.warnung }}</td>
-
-                <td>{{ eintrag.sirene.sirenenprobe }}</td>
+                <td>{{ eintrag.sirene.device.issi }}</td>
 
                 <td>{{ eintrag.sirene.breitengrad|default:"—" }}</td>
 
@@ -150,6 +120,7 @@
                         —
                     {% endif %}
                 </td>
+
 
                 <td>{{ eintrag.zuteilungsnummer|default:"—" }}</td>
 

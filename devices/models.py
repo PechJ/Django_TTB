@@ -455,6 +455,12 @@ class SirenStammdaten(models.Model):
         blank=True,
         default="",
     )
+    
+    issi = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
 
     warnung = models.CharField(
         max_length=50,

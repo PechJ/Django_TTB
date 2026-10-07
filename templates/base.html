@@ -1,25 +1,153 @@
-<header>
-    <h1>TTB</h1>
-</header>
+{% load static %}
 
-<main>
+<!DOCTYPE html>
+<html lang="de">
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TTB{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="top-header-logo">
+            <img
+                src="{% static 'images/ttb-logo.png' %}"
+                alt="TTB Augsburg"
+            >
         </div>
-    {% endfor %}
-{% endif %}
+    </header>
 
-{% block content %}
-{% endblock %}
+    <div class="app">
 
-</main>
+        <aside class="sidebar">
 
-<footer>
-    TTB © 2026
-</footer>
+            <nav class="navigation">
+
+                {% with route=request.resolver_match.url_name %}
+
+                    <!-- STARTSEITE -->
+                    <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+                        <span class="nav-icon">⌂</span>
+                        <span>Startseite</span>
+                    </a>
+
+
+                    <!-- ALARMIERUNG -->
+                    <a href="/alarmierung/" class="nav-item {% if route == 'alarmierung_home' or route == 'alarmierung-home' or route == 'alarmierung-sirenen' or route == 'pager_list' or route == 'pager_detail' or route == 'pager_historie' or route == 'pager_reparatur_start' or route == 'pager_reparatur_rueckkehr' or route == 'pager_import' or route == 'frt_import' %}active{% endif %}">
+                        <span class="nav-icon">▣</span>
+                        <span>Alarmierung</span>
+                    </a>
+
+                    {% if route == 'alarmierung_home' or route == 'alarmierung-home' or route == 'alarmierung-sirenen' or route == 'pager_list' or route == 'pager_detail' or route == 'pager_historie' or route == 'pager_reparatur_start' or route == 'pager_reparatur_rueckkehr' or route == 'pager_import' or route == 'frt_import' %}
+
+                        <div class="nav-submenu">
+
+                            <a href="/alarmierung/" class="nav-subitem {% if route == 'alarmierung_home' %}active{% endif %}">
+                                Übersicht
+                            </a>
+
+                            <a href="/alarmierung/sirenen/" class="nav-subitem {% if route == 'alarmierung-sirenen' %}active{% endif %}">
+                                Sirenen
+                            </a>
+
+                            <a href="{% url 'devices:pager_list' %}" class="nav-subitem {% if route == 'pager_list' or route == 'pager_detail' or route == 'pager_historie' or route == 'pager_reparatur_start' or route == 'pager_reparatur_rueckkehr' %}active{% endif %}">
+                                Pager
+                            </a>
+
+                            <a href="{% url 'devices:pager_import' %}" class="nav-subitem {% if route == 'pager_import' or route == 'pager_detail' or route == 'pager_historie' or route == 'pager_reparatur_start' or route == 'pager_reparatur_rueckkehr' %}active{% endif %}">
+                                Pager-Import
+                            </a>
+
+                            <a href="{% url 'devices:frt_import' %}" class="nav-subitem {% if route == 'frt_import' or route == 'pager_detail' or route == 'pager_historie' or route == 'pager_reparatur_start' or route == 'pager_reparatur_rueckkehr' %}active{% endif %}">
+                                FRT-Import
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- FUNK -->
+                    <a href="{% url 'devices:funk_home' %}" class="nav-item {% if route == 'funk_home' or route == 'device_list' or route == 'device_detail' or route == 'checklist_punkt_toggle' or route == 'programming_list' or route == 'programming_complete' or route == 'manufacturer_import' or route == 'dashboard' %}active{% endif %}">
+                        <span class="nav-icon">◉</span>
+                        <span>Funk</span>
+                    </a>
+
+                    {% if route == 'funk_home' or route == 'device_list' or route == 'import' or route == 'device_detail' or route == 'checklist_punkt_toggle' or route == 'programming_list' or route == 'programming_complete' or route == 'manufacturer_import' or route == 'dashboard' %}
+
+                        <div class="nav-submenu">
+
+                            <a href="{% url 'devices:funk_home' %}" class="nav-subitem {% if route == 'funk_home' %}active{% endif %}">
+                                Übersicht
+                            </a>
+
+                            <a href="{% url 'devices:device_list' %}" class="nav-subitem {% if route == 'device_list' or route == 'device_detail' or route == 'checklist_punkt_toggle' %}active{% endif %}">
+                                Geräte
+                            </a>
+
+                            <a href="{% url 'devices:programming_list' %}" class="nav-subitem {% if route == 'programming_list' or route == 'programming_complete' %}active{% endif %}">
+                                Programmierung
+                            </a>
+
+                            <a href="{% url 'devices:manufacturer_import' %}" class="nav-subitem {% if route == 'manufacturer_import' %}active{% endif %}">
+                                Selectric-Import
+                            </a>
+
+                            <a href="{% url 'devices:import' %}" class="nav-subitem {% if route == 'import' %}active{% endif %}">
+                                Netzzugang-Import
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- INFORMATION -->
+                    <a href="/information/" class="nav-item {% if '/information/' in request.path %}active{% endif %}">
+                        <span class="nav-icon">ⓘ</span>
+                        <span>Information</span>
+                    </a>
+
+                {% endwith %}
+
+            </nav>
+
+        </aside>
+
+
+        <div class="workspace">
+
+            <main class="content">
+
+                {% if messages %}
+                    <div class="messages">
+
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
+
+            </main>
+
+            <footer class="footer">
+                TTB © 2026
+            </footer>
+
+        </div>
+
+    </div>
 
 </body>
+
 </html>

@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Funkgeräte{% endblock %}
+
+{% block content %}
+
 <h1>Funkgerät</h1>
 
 <h2>{{ device.funkrufname }}</h2>
@@ -157,3 +163,5 @@
 <p>Für dieses Gerät existiert noch keine Checkliste.</p>
 
 {% endif %}
+
+{% endblock %}

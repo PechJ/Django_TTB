@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -7,7 +13,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0px;
             background: #f4f6f8;
             color: #222;
         }
@@ -65,10 +71,10 @@
 <h1>Dashboard</h1>
 
 <div class="summary">
-    {% if offene_checklisten %}
-        🔔 {{ offene_checklisten|length }} offene Gerätebearbeitung{{ offene_checklisten|length|pluralize }}
+    {% if offene_checklisten|length == 1 %}
+        🔔 1 offener Auftrag
     {% else %}
-        ✅ Keine offenen Gerätebearbeitungen
+        🔔 {{ offene_checklisten|length }} offene Aufträge
     {% endif %}
 </div>
 
@@ -111,3 +117,5 @@
 
 </body>
 </html>
+
+{% endblock %}

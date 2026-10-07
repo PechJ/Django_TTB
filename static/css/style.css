@@ -1,88 +1,327 @@
+
+/* =========================================================
+   TTB – Grundlayout
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
 body {
     margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
     font-family: Arial, Helvetica, sans-serif;
+
     background: #f3f4f6;
     color: #333;
 }
 
-/* ---------- Header ---------- */
 
-header {
-    background: #1d3557;
-    color: white;
-    padding: 20px 40px;
-}
+/* =========================================================
+   KOPFZEILE
+   ========================================================= */
 
-header h1 {
-    margin: 0;
-}
+.top-header {
+    height: 82px;
 
-/* ---------- Inhalt ---------- */
-
-main {
-    max-width: 1200px;
-    margin: auto;
-    padding: 40px;
-}
-
-.welcome {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.welcome h2 {
-    margin-bottom: 10px;
-}
-
-/* ---------- Kacheln ---------- */
-
-.tiles {
     display: flex;
-    gap: 30px;
+    align-items: center;
+
+    padding: 0 28px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #d9dee5;
 }
 
-.tile {
-    flex: 1;
 
-    background: white;
+.top-header-logo {
+    height: 64px;
 
-    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
 
-    padding: 30px;
+
+.top-header-logo img {
+    display: block;
+
+    height: 64px;
+    width: auto;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app {
+    display: flex;
+
+    min-height: calc(100vh - 82px);
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    width: 230px;
+    min-width: 230px;
+
+    background: #243b53;
+
+    padding: 20px 12px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.nav-item {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    min-height: 44px;
+
+    padding: 10px 14px;
+
+    border-radius: 7px;
+
+    color: rgba(255, 255, 255, 0.82);
 
     text-decoration: none;
 
-    color: inherit;
+    font-size: 15px;
+    font-weight: 400;
 
-    box-shadow: 0 4px 10px rgba(0,0,0,.1);
-
-    transition: .2s;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 }
 
-.tile:hover {
 
-    transform: translateY(-5px);
+/* ---------- Hover ---------- */
 
-    box-shadow: 0 10px 20px rgba(0,0,0,.15);
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
 
+    color: white;
 }
 
-.tile h3 {
 
-    margin-top: 0;
+/* ---------- Aktiver Menüpunkt ---------- */
 
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.14);
+
+    color: white;
+
+    font-weight: 600;
+
+    box-shadow: inset 3px 0 0 white;
 }
 
-/* ---------- Footer ---------- */
 
-footer {
+/* ---------- Icon ---------- */
 
-    margin-top: 60px;
+.nav-icon {
+    width: 22px;
+
+    flex-shrink: 0;
 
     text-align: center;
 
-    padding: 20px;
+    font-size: 17px;
+
+    opacity: 0.85;
+}
+
+
+.nav-item.active .nav-icon {
+    opacity: 1;
+}
+
+
+.nav-icon {
+    width: 22px;
+
+    text-align: center;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   UNTERMENÜS
+   ========================================================= */
+
+.nav-submenu {
+    display: flex;
+    flex-direction: column;
+
+    margin: 2px 0 8px 35px;
+
+    padding-left: 14px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+
+.nav-subitem {
+    display: flex;
+    align-items: center;
+
+    min-height: 34px;
+
+    padding: 6px 10px;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 400;
+
+    border-radius: 5px;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.nav-subitem:hover {
+    background: rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+}
+
+
+.nav-subitem.active {
+    background: rgba(255, 255, 255, 0.08);
+
+    color: #20a9c7;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ARBEITSBEREICH
+   ========================================================= */
+
+.workspace {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: calc(100vh - 82px);
+}
+
+/* =========================================================
+   INHALT
+   ========================================================= */
+
+.content {
+    flex: 1;
+
+    width: 100%;
+
+    padding: 35px;
+}
+
+
+/* =========================================================
+   MELDUNGEN
+   ========================================================= */
+
+.messages {
+    margin-bottom: 25px;
+}
+
+
+.alert {
+    padding: 12px 16px;
+
+    margin-bottom: 10px;
+
+    background: white;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    padding: 18px 30px;
+
+    background: white;
+
+    border-top: 1px solid #e5e7eb;
 
     color: #777;
+
+    font-size: 13px;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    .nav-item {
+        justify-content: center;
+
+        padding: 12px 0;
+    }
+
+    .nav-item:hover {
+        padding-left: 0;
+    }
+
+    .nav-item span:last-child {
+        display: none;
+    }
+
+    .content {
+        padding: 25px;
+    }
 
 }
