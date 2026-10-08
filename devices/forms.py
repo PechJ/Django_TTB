@@ -3,7 +3,7 @@ from django import forms
 
 class ManufacturerRadioImportForm(forms.Form):
     file = forms.FileField(
-        label="Seupra CSV-Datei"
+        label="Selectric CSV-Datei"
     )
 
 

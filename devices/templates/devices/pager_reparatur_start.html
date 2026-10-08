@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <form method="post">
     {% csrf_token %}
 
@@ -240,3 +244,5 @@
         Reparatur starten
     </button>
 </form>
+
+{% endblock %}

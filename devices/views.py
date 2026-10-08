@@ -22,6 +22,7 @@ from alarmierung.imports.siren_importer import SirenFRTAntragImporter, SirenFRTF
 from datetime import datetime
 from alarmierung.imports.fertigmeldung_reader import FertigmeldungReader
 from alarmierung.imports.fertigmeldung_importer import FertigmeldungImporter
+from devices.exports.dfm_exporter import DfmExporter
 
 
 def device_list(request):
@@ -686,7 +687,7 @@ def import_view(request):
 
             rows, import_type = ExcelReader(uploaded_file).read()
             
-                        # -------------------------------------------------
+            # -------------------------------------------------
             # FRT-IMPORTS
             # -------------------------------------------------
 
@@ -775,8 +776,10 @@ def import_view(request):
                     radio_exporter.export()
 
                     builder = TactilonRadioBuilder(rows)
+                    dfm_builder = DfmExporter(rows)
 
                     headers, export_rows = builder.build()
+                    export_rows = dfm_builder.build()
 
                     filename = create_export_filename(
                         rows[0]["organisationsname"]
