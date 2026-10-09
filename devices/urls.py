@@ -115,4 +115,5 @@ urlpatterns = [
         views.frt_import_view,
         name="frt_import",
     ),
+    
 ]

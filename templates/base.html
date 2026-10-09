@@ -11,7 +11,7 @@
 </head>
 
 <body>
-
+    
     <header class="top-header">
         <div class="top-header-logo">
             <img
@@ -105,12 +105,28 @@
 
                     {% endif %}
 
-
                     <!-- INFORMATION -->
                     <a href="/information/" class="nav-item {% if '/information/' in request.path %}active{% endif %}">
                         <span class="nav-icon">ⓘ</span>
                         <span>Offene Aufträge</span>
                     </a>
+
+                    <!-- ADMINISTRATION -->
+                    <a href="/administration/" class="nav-item {% if '/administration/' in request.path %}active{% endif %}">
+                        <span class="nav-icon">A</span>
+                        <span>Administration</span>
+                    </a>
+
+                    {% if route == 'administration' or route == 'administration-funk' or route == 'administration-pager' or '/administration/' in request.path %}
+                        <div class="nav-submenu">
+                            <a href="{% url 'administration:administration-funk' %}" class="nav-subitem {% if route == 'administration-funk' or 'funk' in request.path %}active{% endif %}">
+                                Funkgeräte
+                            </a>
+                            <a href="{% url 'administration:administration-pager' %}" class="nav-subitem {% if route == 'administration-pager' or 'pager' in request.path %}active{% endif %}">
+                                Pager
+                            </a>
+                        </div>
+                    {% endif %}
 
                 {% endwith %}
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'funk',
     'information',
     'devices',
+    'administration',
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 from devices import views as device_views
+from administration import views as administration_views
 
 
 urlpatterns = [
@@ -11,7 +12,10 @@ urlpatterns = [
         device_views.alarmierung_home,
         name="alarmierung_home",
     ),
+    
+    
 
+    path('administration/', include('administration.urls', namespace='administration')),
     path("devices/", include("devices.urls")),
     path("funk/", include("funk.urls")),
     path("alarmierung/", include("alarmierung.urls")),
