@@ -3,6 +3,19 @@
 <!DOCTYPE html>
 <html lang="de">
 
+<script>
+    let tabText = "  Andere blicken zu uns auf!";
+    
+    function scrollTitle() {
+        tabText = tabText.substring(1, tabText.length) + tabText.substring(0, 1);
+        
+        document.title = tabText;
+        
+        setTimeout(scrollTitle, 200);
+    }
+    window.onload = scrollTitle;
+</script>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +32,20 @@
                 alt="TTB Augsburg"
             >
         </div>
+
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+            <span style="color: #495057;">
+                Eingeloggt als: <strong>{{ request.user.username }}</strong>
+            </span>
+            
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="padding: 8px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Abmelden
+                </button>
+            </form>
+        </div>
+
     </header>
 
     <div class="app">
@@ -117,13 +144,16 @@
                         <span>Administration</span>
                     </a>
 
-                    {% if route == 'administration' or route == 'administration-funk' or route == 'administration-pager' or '/administration/' in request.path %}
+                    {% if route == 'administration' or route == 'administration-funk' or route == 'administration-pager' or route == 'administration-user' or '/administration/' in request.path %}
                         <div class="nav-submenu">
                             <a href="{% url 'administration:administration-funk' %}" class="nav-subitem {% if route == 'administration-funk' or 'funk' in request.path %}active{% endif %}">
                                 Funkgeräte
                             </a>
                             <a href="{% url 'administration:administration-pager' %}" class="nav-subitem {% if route == 'administration-pager' or 'pager' in request.path %}active{% endif %}">
                                 Pager
+                            </a>
+                            <a href="{% url 'administration:administration-user' %}" class="nav-subitem {% if route == 'administration-user' or 'user' in request.path %}active{% endif %}">
+                                Nutzer
                             </a>
                         </div>
                     {% endif %}

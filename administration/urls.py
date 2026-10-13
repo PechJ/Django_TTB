@@ -8,4 +8,5 @@ urlpatterns = [
     path('', views.administration, name='administration'),
     path('funk/', views.administration_funk, name='administration-funk'),
     path('pager/', views.administration_pager, name='administration-pager'),
+    path('administration/', views.administration_user, name='administration-user'),
 ]

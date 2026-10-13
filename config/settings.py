@@ -134,3 +134,25 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# User-Whitelist
+
+EMAIL_WHITELIST = [
+    'juergen.pech@augsburg.de',
+    'thomas.demmler@augsburg.de',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'config.backends.WhitelistAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Wohin nach erfolgreichem Login?
+LOGIN_REDIRECT_URL = 'home'
+
+# Wohin, wenn man ausgeloggt wird?
+LOGOUT_REDIRECT_URL = 'login'
+
+# Wohin werden nicht-eingeloggte User geschickt, die geschützte Seiten aufrufen?
+LOGIN_URL = 'login'

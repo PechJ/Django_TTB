@@ -23,8 +23,10 @@ from datetime import datetime
 from alarmierung.imports.fertigmeldung_reader import FertigmeldungReader
 from alarmierung.imports.fertigmeldung_importer import FertigmeldungImporter
 from devices.exports.dfm_exporter import DfmExporter
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def device_list(request):
     devices = Device.objects.exclude(
         eg_typ="TPG2200"
@@ -49,6 +51,7 @@ def device_list(request):
     )
 
 
+@login_required
 def dashboard(request):
     devices = Device.objects.exclude(
         eg_typ="TPG2200"
@@ -78,6 +81,7 @@ def dashboard(request):
     )
     
 
+@login_required
 def pager_list(request):
     devices = Device.objects.filter(
         eg_typ="TPG2200"
@@ -173,6 +177,7 @@ def pager_list(request):
     )
 
 
+@login_required
 def pager_historie(request, device_id):
     device = get_object_or_404(
         Device,
@@ -196,6 +201,7 @@ def pager_historie(request, device_id):
     )
 
 
+@login_required
 def pager_detail(request, device_id):
 
     device = get_object_or_404(
@@ -253,6 +259,7 @@ def pager_detail(request, device_id):
     )
 
 
+@login_required
 def pager_reparatur_rueckkehr(request, reparatur_id):
     reparatur = get_object_or_404(
         PagerReparatur,
@@ -301,6 +308,7 @@ def pager_reparatur_rueckkehr(request, reparatur_id):
     )
 
 
+@login_required
 def pager_reparatur_start(request, device_id):
     device = get_object_or_404(
         Device,
@@ -417,6 +425,7 @@ def pager_reparatur_start(request, device_id):
     )
 
 
+@login_required
 def manufacturer_import_view(request):
 
     form = ManufacturerRadioImportForm()
@@ -453,6 +462,7 @@ def manufacturer_import_view(request):
     )
 
 
+@login_required
 def pager_import_view(request):
 
     form = PagerImportForm()
@@ -501,6 +511,7 @@ def pager_import_view(request):
     )
 
 
+@login_required
 def frt_import_view(request):
 
     form = ImportForm()
@@ -669,7 +680,8 @@ def frt_import_view(request):
         },
     )
         
-    
+
+@login_required    
 def import_view(request):
 
     form = ImportForm()
@@ -827,6 +839,7 @@ def import_view(request):
     )
     
 
+@login_required
 def funk_home(request):
 
     return render(
@@ -834,7 +847,8 @@ def funk_home(request):
         "devices/funk_home.html",
     )
     
-    
+
+@login_required    
 def alarmierung_home(request):
 
     return render(
@@ -843,6 +857,7 @@ def alarmierung_home(request):
     )
         
 
+@login_required
 def programming_list(request):
 
     devices = Device.objects.exclude(
@@ -861,6 +876,7 @@ def programming_list(request):
     )
     
 
+@login_required
 def programming_complete(request, device_id):    
     from django.shortcuts import get_object_or_404, redirect
     from django.utils import timezone
@@ -883,6 +899,7 @@ def programming_complete(request, device_id):
     return redirect("devices:programming_list")
 
 
+@login_required
 def device_detail(request, device_id):
     device = get_object_or_404(
         Device.objects.exclude(eg_typ="TPG2200"),
@@ -905,7 +922,8 @@ def device_detail(request, device_id):
         },
     )
     
-    
+
+@login_required    
 def checklist_punkt_toggle(request, device_id, punkt_id):
     if request.method != "POST":
         return redirect("devices:device_detail", device_id=device_id)

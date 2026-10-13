@@ -1,0 +1,63 @@
+<!-- templates/registration/register.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierung</title>
+    <style>
+        .register-container { max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .error-message { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 3px; margin-bottom: 15px; }
+        .success-message { color: #155724; background-color: #d4edda; padding: 10px; border-radius: 3px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 8px; box-sizing: border-box; }
+        .help-text { font-size: 0.85em; color: #6c757d; margin-top: 5px; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .login-link { text-align: center; margin-top: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Konto erstellen</h2>
+
+    <!-- Erfolgs- und Fehlermeldungen von Django anzeigen -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Validierungsfehler des Formulars anzeigen -->
+    {% if form.errors %}
+        <div class="error-message">
+            Bitte korrigiere die Fehler im Formular.
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="help-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div style="color: red; font-size: 0.85em;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit">Registrieren</button>
+    </form>
+
+    <a class="login-link" href="{% url 'login' %}">Bereits ein Konto? Hier einloggen</a>
+</div>
+
+</body>
+</html>

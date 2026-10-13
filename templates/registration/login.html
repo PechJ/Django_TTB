@@ -1,0 +1,52 @@
+<!-- templates/registration/login.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        .login-container { max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .error-message { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 3px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>System Login</h2>
+
+    <!-- Fehlermeldungen anzeigen (Falsches Passwort ODER E-Mail nicht auf Whitelist) -->
+    {% if form.errors or exception %}
+        <div class="error-message">
+            {% if form.errors %}
+                Benutzername oder Passwort ist falsch.
+            {% else %}
+                <!-- Hier landet die Meldung aus unserem Whitelist-Backend -->
+                {{ exception }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Benutzername (oder E-Mail):</label>
+            <input type="text" name="username" autofocus required id="id_username">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">Passwort:</label>
+            <input type="password" name="password" required id="id_password">
+        </div>
+
+        <button type="submit">Einloggen</button>
+    </form>
+    <a href="{% url 'register' %}" style="display: block; text-align: center; margin-top: 15px;">Noch kein Konto? Hier registrieren</a>
+</div>
+
+</body>
+</html>
