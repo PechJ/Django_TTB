@@ -53,7 +53,6 @@ class DeviceImporter:
                     "aopta_af": row["aopta_af"],
                     "aopta_ag": row["aopta_ag"],
                     "aopta_ah": row["aopta_ah"],
-                    "aopta_ai": row["aopta_ai"],
                     },
                 )
             checkliste = create_checklist(

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Administration Funk{% endblock %}
+
+{% block content %}
+
+<h2>Administration Funkgerät</h2>
+
+<table border="1">
+    <tr>
+        <th>Datum TTB</th>
+        <td>{{ device.datum_ttb|date:"d.m.Y H:i" }}</td>
+    </tr>
+
+    <th>EG-Art:</th> 
+            <td>
+            <input type="text" 
+                    name="eg-art" 
+                    value="{{ device.eg_art }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+        <th>Hersteller</th>
+        <td>{{ device.hersteller }}</td>
+    </tr>
+
+    <tr>
+        <th>EG-Typ</th>
+        <td>{{ device.geraetename }}</td>
+    </tr>
+
+    <th>Seriennummer:</th> 
+            <td>
+            <input type="text" 
+                    name="seriennummer" 
+                    value="{{ device.seriennummer }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+        <th>TEI</th>
+        <td>{{ device.tei }}</td>
+    </tr>
+
+    <th>ISSI:</th> 
+            <td>
+            <input type="text" 
+                    name="issi" 
+                    value="{{ device.issi }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>BOS-SiKA-Nr.:</th> 
+            <td>
+            <input type="text" 
+                    name="BOS-SiKa-Nr." 
+                    value="{{ device.bos_sika_nummer }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>BOS-SiKa-Name:</th> 
+            <td>
+            <input type="text" 
+                    name="BOS-Sika_name" 
+                    value="{{ device.bos_sika_name }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Landkreis:</th> 
+            <td>
+            <input type="text" 
+                    name="Landkreis" 
+                    value="{{ device.landkreis }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Kommune:</th> 
+            <td>
+            <input type="text" 
+                    name="Kommune" 
+                    value="{{ device.kommune }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Organisationsart:</th> 
+            <td>
+            <input type="text" 
+                    name="Organisationsart" 
+                    value="{{ device.organisationsart }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Organisationsname:</th> 
+            <td>
+            <input type="text" 
+                    name="Organisationsname" 
+                    value="{{ device.organisationsname }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Fahrzeugart / Standort:</th> 
+            <td>
+            <input type="text" 
+                    name="Fahrzeugart / Standort" 
+                    value="{{ device.fahrzeugart }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Funkrufname:</th> 
+            <td>
+            <input type="text" 
+                    name="Funkrufname" 
+                    value="{{ device.funkrufname }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Verwendung:</th> 
+            <td>
+            <input type="text" 
+                    name="Verwendung" 
+                    value="{{ device.verwendung }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+
+    <th>Software-Version:</th> 
+            <td>
+            <input type="text" 
+                    name="Software-Version" 
+                    value="{{ device.software_version }}" 
+                    class="table-inline-input"
+                    hx-post="{% url 'administration:update_device_field' device.id %}" 
+                    hx-trigger="change, blur"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-swap="none">
+
+    <tr>
+        <th>Status</th>
+        <td>{{ device.get_status_display }}</td>
+    </tr>
+
+</table>
+
+
+{% endblock %}

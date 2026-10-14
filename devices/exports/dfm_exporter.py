@@ -658,11 +658,9 @@ class DfmExporter:
     def _betriebsstelle(self, row):
         
         betriebsstelle = ""
-        print("jetzt bin ich hier!")
         
         for i in self.datalist:
             if row["kommune"] == i[9] and row["landkreis"] == i[8]:
-                print("hier bin ich!")
                 betriebsstelle = i[6]
             else:
                 pass
@@ -671,11 +669,38 @@ class DfmExporter:
         
     def _opta(self, row):
         
-        import re
+        print("Die Aopta lautet: ", row["aopta_org"] + "und :",  row["aopta_region"])
         
-        opta = 'BYFW_' + row["aopta_t"] + row["aopta_u"] + row["aopta_v"] + row["aopta_w"] + row["aopta_x"] + row["aopta_y"] + row["aopta_z"] + row["aopta_aa"] + row["aopta_ab"] + row["aopta_ac"] + row["aopta_ad"] + row["aopta_ae"] + row["aopta_af"] + row["aopta_ag"] + row["aopta_ah"] + row["aopta_ai"]
+        region = row["aopta_region"]
+        
+        if region == 'A#':
+            region = 'A# '
+        if region == 'A':
+            region == 'A  '
+            
+        org = row["aopta_org"]
+        
+        if org == "FW " or org == "FW":
+            org == "FW "
+        else:
+            org == "KAT"
+        
+        def return_char(char):
+            if char == "" or char == " ":
+                char = " "
+                return char
+            else:
+                return char
+        
+        opta = 'BY' + org + region + return_char(row["aopta_t"]) + return_char(row["aopta_u"]) + return_char(row["aopta_v"]) + return_char(row["aopta_w"]) + return_char(row["aopta_x"]) + return_char(row["aopta_y"]) + return_char(row["aopta_z"]) + return_char(row["aopta_aa"]) + return_char(row["aopta_ab"]) + return_char(row["aopta_ac"]) + return_char(row["aopta_ad"]) + return_char(row["aopta_ae"]) + return_char(row["aopta_af"]) + return_char(row["aopta_ag"]) + return_char(row["aopta_ah"])
+        
+        return opta
+        
+    """
         prefix = opta[:-4]
         variable = opta[-4:]
+                
+        import re
 
         # Fall: DT11 -> DT 1 1
         if re.match(r"^[A-Za-z]{2}\d{2}$", variable):
@@ -685,7 +710,7 @@ class DfmExporter:
         # Fall: 4021 -> 40 21
         return f"{prefix} {variable[:2]} {variable[2:]}"
 
-    """
+
     def export(self):
 
         self.ws.append(self.HEADERS)
