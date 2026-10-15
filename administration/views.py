@@ -62,12 +62,65 @@ def administration_funk(request):
 @login_required
 @require_POST
 def update_device_field(request, pk):
-    device = get_object_or_404(Device, pk=pk)
+    #device = get_object_or_404(Device, pk=pk)
+    
+    try:
+        device = Device.objects.get(pk=pk)
+    except Device.DoesNotExist:
+        return HttpResponse("Gerät wurde in der DB nicht gefunden!", status=404)
     
     # Prüfen, ob das Feld 'bos_sika_name' geschickt wurde
-    if 'bos_sika_name' in request.POST:
-        device.bos_sika_name = request.POST.get('bos_sika_name')
+    if 'eg_art' in request.POST:
+        device.eg_art = request.POST.get('eg_art')
         device.save()
         
+    if 'seriennummer' in request.POST:
+        device.seriennummer = request.POST.get('seriennummer')
+        device.save()
+        
+    if 'issi' in request.POST:
+            device.issi = request.POST.get('issi')
+            device.save()
+            
+    if 'bos_sika_nummer' in request.POST:
+            device.bos_sika_nummer = request.POST.get('bos_sika_nummer')
+            device.save()
+            
+    if 'bos_sika_name' in request.POST:
+            device.bos_sika_name = request.POST.get('bos_sika_name')
+            device.save()
+            
+    if 'landkreis' in request.POST:
+            device.landkreis = request.POST.get('landkreis')
+            device.save()
+            
+    if 'kommune' in request.POST:
+            device.kommune = request.POST.get('kommune')
+            device.save()
+        
+    if 'organisationsart' in request.POST:
+                device.organisationsart = request.POST.get('organisationsart')
+                device.save()
+                
+    if 'organisationsname' in request.POST:
+                device.organisationsname = request.POST.get('organisationsname')
+                device.save()
+                
+    if 'fahrzeugart' in request.POST:
+                device.fahrzeugart = request.POST.get('fahrzeugart')
+                device.save()
+                
+    if 'funkrufname' in request.POST:
+                    device.funkrufname = request.POST.get('funkrufname')
+                    device.save()
+                    
+    if 'verwendung' in request.POST:
+                    device.verwendung = request.POST.get('verwendung')
+                    device.save()
+                    
+    if 'software_version' in request.POST:
+                    device.software_version = request.POST.get('software_version')
+                    device.save()
+                
     # HTMX erwartet eine Antwort. Ein leerer HTTP 200 reicht aus.
     return HttpResponse(status=200)
