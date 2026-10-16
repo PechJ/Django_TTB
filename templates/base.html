@@ -145,7 +145,7 @@
                         <span>Administration</span>
                     </a>
 
-                    {% if route == 'administration' or route == 'administration-funk' or route == 'administration-pager' or route == 'administration-user' or '/administration/' in request.path %}
+                    {% if route == 'administration' or route == 'administration-funk' or route == 'administration-pager' or route == 'administration-user' or route == 'administration-import' or '/administration/' in request.path %}
                         <div class="nav-submenu">
                             <a href="{% url 'administration:administration-funk' %}" class="nav-subitem {% if route == 'administration-funk' or 'funk' in request.path %}active{% endif %}">
                                 Funkgeräte
@@ -156,6 +156,10 @@
                             <a href="{% url 'administration:administration-user' %}" class="nav-subitem {% if route == 'administration-user' or 'user' in request.path %}active{% endif %}">
                                 Nutzer
                             </a>
+                            <a href="{% url 'administration:administration-import' %}" class="nav-subitem {% if route == 'administration-import' or 'import' in request.path %}active{% endif %}">
+                                Import
+                            </a>
+
                         </div>
                     {% endif %}
 

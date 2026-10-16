@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from devices.models import Device
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from .imports.excel_reader import ExcelReader
+from devices.imports.device_importer import AdminDeviceImporter
+from django.contrib import messages
+from django import forms
 
 
 @login_required
@@ -32,11 +36,10 @@ def admin_funk_detail(request, pk):
 
 @login_required
 def administration_user(request):
-    # Holt alle Benutzer aus der Datenbank
+    
     all_users = User.objects.all()
     print(("Die Nutzer: ", User.objects.all()))
     
-    # Übergibt die Benutzer im "Context" an das HTML-Template
     context = {
         'all_users': all_users
     }
@@ -62,14 +65,12 @@ def administration_funk(request):
 @login_required
 @require_POST
 def update_device_field(request, pk):
-    #device = get_object_or_404(Device, pk=pk)
     
     try:
         device = Device.objects.get(pk=pk)
     except Device.DoesNotExist:
         return HttpResponse("Gerät wurde in der DB nicht gefunden!", status=404)
     
-    # Prüfen, ob das Feld 'bos_sika_name' geschickt wurde
     if 'eg_art' in request.POST:
         device.eg_art = request.POST.get('eg_art')
         device.save()
@@ -122,5 +123,39 @@ def update_device_field(request, pk):
                     device.software_version = request.POST.get('software_version')
                     device.save()
                 
-    # HTMX erwartet eine Antwort. Ein leerer HTTP 200 reicht aus.
     return HttpResponse(status=200)
+
+
+@login_required
+def administration_import(request):
+    
+    if request.method == "POST":
+
+        form = ExcelReader(request.POST, request.FILES)
+
+        if form.is_valid():
+            try:
+
+                data_rows = form.read()
+
+                importer = AdminDeviceImporter(data_rows)
+                result = importer.run()
+
+                messages.success(
+                    request,
+                    f"{result.updated} Geräte aktualisiert, "
+                    f"{result.skipped} nicht zugeordnet."
+                )
+            except Exception as e:
+                messages.error(request, f"Fehler beim Importieren: {e}")
+    else:
+        
+        form = ExcelReader()
+
+    return render(
+        request,
+        "administration_import.html",
+        {
+            "form": form,
+        },
+        )

@@ -66,3 +66,75 @@ class DeviceImporter:
                 self.updated += 1
 
         return self
+    
+    
+class AdminDeviceImporter:
+
+    def __init__(self, rows):
+        self.rows = rows
+        
+        self.updated = 0
+        self.skipped = 0
+
+    def run(self):
+            
+        excel_teis = []
+                
+        for row in self.rows:
+            
+            tei_str = str(row.get("tei", "")).strip()
+            if (len(tei_str) == 15 and tei_str.isdigit()):
+            
+                if not row.get("tei"):
+                    print(f"ÜBERSPRUNGEN (Excel-Zeile ohne TEI): Seriennummer {row.get('seriennummer')}")
+                    self.skipped += 1
+                    continue
+                    
+                excel_teis.append(row["tei"])
+                
+                device, created = Device.objects.update_or_create(
+                    tei=row["tei"],
+                    defaults={
+                        "datum_ttb": row["datum_ttb"],
+                        "eg_art": row["eg_art"],
+                        "hersteller": row["hersteller"],
+                        "landkreis": row["landkreis"],
+                        "kommune": row["kommune"],
+                        "funkrufname": row["funkrufname"],
+                        "seriennummer": row["seriennummer"],
+                        "bos_sika_nummer": row["sika-nummer"],
+                        "bos_sika_name": row["sika-name"],
+                        "fahrzeugart": row["fahrzeugart"],
+                        "verwendung": row["verwendung"],
+                        "issi": row["issi"],
+                        "gopta_itsi": row["gopta_itsi"],
+                        "aopta_land": row["land"],
+                        "aopta_org": row["org"],
+                        "aopta_region": row["landkreis"],
+                        "aopta_t": row["aopta_t"],
+                        "aopta_u": row["aopta_u"],
+                        "aopta_v": row["aopta_v"],
+                        "aopta_w": row["aopta_w"],
+                        "aopta_x": row["aopta_x"],
+                        "aopta_y": row["aopta_y"],
+                        "aopta_z": row["aopta_z"],
+                        "aopta_aa": row["aopta_aa"],
+                        "aopta_ab": row["aopta_ab"],
+                        "aopta_ac": row["aopta_ac"],
+                        "aopta_ad": row["aopta_ad"],
+                        "aopta_ae": row["aopta_ae"],
+                        "aopta_af": row["aopta_af"],
+                        "aopta_ag": row["aopta_ag"],
+                        "aopta_ah": row["aopta_ah"],
+                        },
+                    )
+            
+                if self.updated:
+                        self.updated += 1
+                else:
+                    self.skipped += 1
+            
+            else:
+                print("kein Update für: ", tei_str)
+                
+        return self
