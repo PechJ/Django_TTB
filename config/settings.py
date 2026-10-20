@@ -158,3 +158,5 @@ LOGOUT_REDIRECT_URL = 'login'
 
 # Wohin werden nicht-eingeloggte User geschickt, die geschützte Seiten aufrufen?
 LOGIN_URL = 'login'
+
+CSRF_TRUSTED_ORIGINS = ['https://django-ttb.onrender.com'] # war vor server nicht vorhanden <------------------------------------------------
