@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-)$vizc5w9j1i@gcz++s60h)=an+@--l1q+l##qwd+&(=%zu@9w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False # War vorher server True <------------------------------------------------------------------------------------------
 
-ALLOWED_HOSTS = ['//django-ttb.onrender.com', 'localhost', '127.0.0.1'] # War vor server leer <------------------------------------------------
+ALLOWED_HOSTS = ['django-ttb.onrender.com', 'localhost', '127.0.0.1'] # War vor server leer <------------------------------------------------
 
 
 # Application definition
