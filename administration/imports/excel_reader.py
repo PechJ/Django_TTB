@@ -94,7 +94,7 @@ class ExcelReader(forms.Form):
             }
 
             if not excel_row[5]:
-                break
+                continue
 
             rows.append(row)
 

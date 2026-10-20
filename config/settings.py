@@ -1,6 +1,4 @@
 from pathlib import Path
-import os
-import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-)$vizc5w9j1i@gcz++s60h)=an+@--l1q+l##qwd+&(=%zu@9w') # War vor server ohne os.environ.get('SECRET_KEY',  <------------------------------------------------ 
+SECRET_KEY = 'django-insecure-)$vizc5w9j1i@gcz++s60h)=an+@--l1q+l##qwd+&(=%zu@9w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # War vorher server True <------------------------------------------------------------------------------------------
+DEBUG = True 
 
-ALLOWED_HOSTS = ['django-ttb.onrender.com', 'localhost', '127.0.0.1'] # War vor server leer <------------------------------------------------
+ALLOWED_HOSTS = [] 
 
 
 # Application definition
@@ -93,13 +91,6 @@ DATABASES = {
 }
 
 
-# Der Block komplett neu seit server <--------------------------------------------------------------------------------------
-if os.environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        ssl_require=True
-    )
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -135,7 +126,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # war vor server nicht vorhanden <------------------------------------------------
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -167,8 +157,3 @@ LOGOUT_REDIRECT_URL = 'login'
 
 # Wohin werden nicht-eingeloggte User geschickt, die geschützte Seiten aufrufen?
 LOGIN_URL = 'login'
-
-CSRF_TRUSTED_ORIGINS = ['https://django-ttb.onrender.com'] # war vor server nicht vorhanden <------------------------------------------------
-
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
