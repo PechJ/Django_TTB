@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-)$vizc5w9j1i@gcz++s60h)=an+@--l1q+l##qwd+&(=%zu@9w') # War vor server ohne os.environ.get('SECRET_KEY',  <------------------------------------------------ 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False # War vorher server True <------------------------------------------------------------------------------------------
+DEBUG = True # War vorher server True <------------------------------------------------------------------------------------------
 
 ALLOWED_HOSTS = ['django-ttb.onrender.com', 'localhost', '127.0.0.1'] # War vor server leer <------------------------------------------------
 
