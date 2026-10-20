@@ -160,3 +160,6 @@ LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
 CSRF_TRUSTED_ORIGINS = ['https://django-ttb.onrender.com'] # war vor server nicht vorhanden <------------------------------------------------
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
